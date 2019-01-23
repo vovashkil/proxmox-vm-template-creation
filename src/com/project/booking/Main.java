@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
@@ -67,10 +69,17 @@ public class Main {
         long result;
 
         LocalTime time = LocalTime.parse("01:30", DateTimeFormatter.ofPattern(DEPARTURE_TIME_FORMAT));
-//        ZoneOffset zoneOffset = ZoneOffset.of;
+        System.out.println("result = " + time);
+
+        time = LocalTime.parse("10:30", DateTimeFormatter.ofPattern(DEPARTURE_TIME_FORMAT));
+        System.out.println("result = " + time);
+
+        time = LocalTime.parse("15:30", DateTimeFormatter.ofPattern(DEPARTURE_TIME_FORMAT));
+        System.out.println("result = " + time);
+
+        //        ZoneOffset zoneOffset = ZoneOffset.of;
 //        result = time.toInstant(zoneOffset).toEpochMilli();
 
-        System.out.println("result = " + time);
 
 
     }

@@ -47,21 +47,23 @@ public class Flight implements DataUtil {
 
     private long timeAsStringParser(String timeAsString) {
 
-        long result;
+        long result= 7777777777L;
 
         try {
             System.out.println("timeAsString = " + timeAsString);
+            System.out.println("timeAsString class = " + timeAsString.getClass().getSimpleName());
 
-            LocalTime time = LocalTime.parse(timeAsString, DateTimeFormatter.ofPattern(DEPARTURE_TIME_FORMAT));
+          result = LocalTime.parse(timeAsString, DateTimeFormatter.ofPattern(DEPARTURE_TIME_FORMAT)).toNanoOfDay();
 //            ZoneOffset zoneOffset = ZoneOffset.of(TIME_ZONE);
 //            result = time.toInstant(zoneOffset).toEpochMilli();
-            result = time.getLong(ChronoField.MILLI_OF_DAY);
+            System.out.println("result = " + result);
+
             System.out.println("result = " + result);
 
         } catch (DateTimeParseException e) {
             System.out.println("exception timeAsString = " + timeAsString);
             System.out.println(e.getParsedString());
-            System.out.println(e.getCause());
+            System.out.println("getCause = " + e.getCause());
 //            result = Long.MIN_VALUE;
             result = 5L;
 
