@@ -21,6 +21,7 @@ public class Main {
 
 //        ConsoleApp app = new ConsoleApp();
 //        app.startApp();
+//test
 
         List<Flight> flights = new ArrayList();
 
