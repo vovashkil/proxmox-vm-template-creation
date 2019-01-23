@@ -69,4 +69,28 @@ class ConsoleApp {
         System.out.println("6. Exit.");
 
     }
+
+    public void loginUser() {
+        Scanner scanner = new Scanner(System.in);
+        for (; ; ) {
+            System.out.println("Enter \"login\", \"register\", or \"exit\"");
+            String input = scanner.nextLine().toUpperCase();
+
+            switch (input) {
+                case "LOGIN":
+                    // get login details
+                    return;
+                case "REGISTER":
+                    // get register details
+                    return;
+                case "EXIT":
+                    // exit the loop
+                    System.exit(0);
+                    break;
+                default:
+                    // invalid input, tell them to try again
+                    System.out.printf("Invalid option (%s), choose login or register!%n", input);
+            }
+        }
+    }
 }
