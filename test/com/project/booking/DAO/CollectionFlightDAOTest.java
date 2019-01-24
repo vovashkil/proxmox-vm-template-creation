@@ -23,9 +23,9 @@ public class CollectionFlightDAOTest {
 
         CollectionFlightDAO flightsCollection = new CollectionFlightDAO();
 
-        flightsCollection.saveFlight(new Flight("flight1","orig1", "dest1", 200, 0, 0));
-        flightsCollection.saveFlight(new Flight("flight2","orig1", "dest2", 200, 0, 0));
-        flightsCollection.saveFlight(new Flight("flight3","orig1", "dest3", 200, 0, 0));
+        flightsCollection.saveFlight(new Flight("flight1",0,0,"orig1", "dest1", 200));
+        flightsCollection.saveFlight(new Flight("flight2",0,0,"orig1", "dest2", 200));
+        flightsCollection.saveFlight(new Flight("flight3",0,0,"orig1", "dest3", 200));
 
         List<Flight> result = flightsCollection.getAllFlights();
 

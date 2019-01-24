@@ -11,8 +11,6 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 class ConsoleApp implements FileUtil, DataUtil {
@@ -46,6 +44,11 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     System.out.println("Displaying online table...");
 
+                    flightsDB.getAllFlights()
+                            .stream()
+                            .sorted((a, b) -> (int) (a.getDepartureDateTime() - b.getDepartureDateTime()))
+                            .forEach(System.out::println);
+
                     break;
 
                 case 2:
@@ -71,29 +74,31 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                 case 11:
 
+                    fillUpFlightDatabaseAutomatically(flightsDB);
+
+                    break;
+
+                case 12:
+
                     System.out.println("Displaying entire list of flights...");
 
                     flightsDB.displayAllFlights();
 
                     break;
 
-                case 12:
-
-                    fillUpFlightDatabaseAutomatically(flightsDB);
-
-                    break;
-
-
                 case 13:
 
+                    System.out.println("Loading a list of flights from file...");
 
+                    flightsDB.readData(FLIGHTS_FILE_PATH);
 
                     break;
-
 
                 case 14:
 
+                    System.out.println("Saving the list of flights to file...");
 
+                    flightsDB.saveData(FLIGHTS_FILE_PATH);
 
                     break;
 
@@ -147,78 +152,36 @@ class ConsoleApp implements FileUtil, DataUtil {
         }
     }
 
-    private void fillUpFlightDatabaseAutomatically(FlightController flightsDB) {
+    private static void fillUpFlightDatabaseAutomatically(FlightController flightsDB) {
+
         System.out.println("Generating database of flights...");
 
-        List<Flight> flights = new ArrayList();
+        LocalDateTime dateTime = LocalDateTime.now(ZoneId.of(TIME_ZONE));
+        ZoneOffset zoneOffset = dateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
+        long start = dateTime.toInstant(zoneOffset).toEpochMilli();
+
 
         try (
+
                 Reader reader = Files.newBufferedReader(Paths.get(SAMPLE_CSV_FILE_PATH));
-                CSVReader csvReader = new CSVReader(reader);
+                CSVReader csvReader = new CSVReader(reader); // Reading records one by one in a String array
+
         ) {
-            // Reading Records One by One in a String array
+
             String[] nextRecord;
 
             while ((nextRecord = csvReader.readNext()) != null) {
 
-                long result;
-                String dateAsString = LocalDate.now().format(DateTimeFormatter.ofPattern(DATE_FORMAT));
-                System.out.println("dateAsString = " + dateAsString);
-                String tmp = nextRecord[1];
-                System.out.println("nextRecord[1] = " + tmp);
-                String tmpDateTime = dateAsString + "T" + tmp;
-                System.out.println("dataTime = " + tmpDateTime);
+                flightsDB.saveFlight(
 
-                int H = 0;
-                int m = 0;
-                String[] strings = tmp.split(":");
+                        new Flight(nextRecord[0],
+                                departureDateTimeGenerator(start),
+                                54000000,
+                                "Kiev Boryspil",
+                                nextRecord[2],
+                                150
 
-                try {
-                    H = Integer.parseInt(strings[0]);
-                    m = Integer.parseInt(strings[1]);
-                } catch (NumberFormatException e) {
-                    H = 0;
-                    m = 0;
-                }
-
-                StringBuffer strBuffer = new StringBuffer(dateAsString);
-                strBuffer.append(" ");
-                strBuffer.append(H + ":" + m);
-                tmpDateTime = strBuffer.toString();
-
-                CharSequence cs = new String(tmpDateTime);
-
-                System.out.println("final dataTime = " + tmpDateTime);
-                System.out.println("exception at " + tmpDateTime.substring(11));
-
-                try {
-
-//                    dateAsString = Instant.ofEpochMilli(result).atZone(ZoneId.of(TIME_ZONE)).toLocalDateTime().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)));
-
-                    LocalDateTime dateTime = LocalDateTime.parse(cs, DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
-                    ZoneOffset zoneOffset = dateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
-                    result = dateTime.toInstant(zoneOffset).toEpochMilli();
-
-
-                } catch (DateTimeParseException e) {
-
-                    System.out.println("exception" + e.getMessage());
-                    System.out.println("ErrorIndex" + e.getErrorIndex());
-                    System.out.println("parsed" + e.getParsedString());
-
-                    result = Long.MIN_VALUE;
-
-                }
-
-
-                flights.add(new Flight(nextRecord[0],
-                        "Kiev Boryspil",
-                        nextRecord[2],
-                        100,
-                        result,
-                        54000000
-                ));
-
+                        ));
 
             }
         } catch (IOException e) {
@@ -229,49 +192,17 @@ class ConsoleApp implements FileUtil, DataUtil {
         }
 
 
-        flights.stream().forEach(System.out::println);
+    }
 
+    public static long departureDateTimeGenerator(long start) {
 
-//        LocalDate date1 = LocalDate.of(2018, 12, 13);
-//
-//        long dateAslong = date1.atStartOfDay(ZoneId.of(TimeZone)).
-//
-//        System.out.println(date1);
+        long result = 0L;
 
+        long end = start + 24 * 60 * 60 * 1000;
 
-        long result;
+        result = start + ((long) (new Random().nextDouble() * (end - start)));
 
-        LocalTime time = LocalTime.parse("01:30", DateTimeFormatter.ofPattern(TIME_FORMAT));
-        System.out.println("result = " + time);
-
-        time = LocalTime.parse("10:30", DateTimeFormatter.ofPattern(TIME_FORMAT));
-        System.out.println("result = " + time);
-
-        time = LocalTime.parse("15:30", DateTimeFormatter.ofPattern(TIME_FORMAT));
-        System.out.println("result = " + time);
-
-        //        ZoneOffset zoneOffset = ZoneOffset.of;
-//        result = time.toInstant(zoneOffset).toEpochMilli();
-
-
-        String dateTimeAsString = "23/01/2019" + " " + "21:23";
-
-
-        try {
-
-            LocalDateTime dateTime = LocalDateTime.parse(dateTimeAsString, DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
-            ZoneOffset zoneOffset = dateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
-            result = dateTime.toInstant(zoneOffset).toEpochMilli();
-
-        } catch (DateTimeParseException e) {
-
-            result = Long.MIN_VALUE;
-
-        }
-
-        System.out.println("result = " + result);
-        System.out.println(Instant.ofEpochMilli(result).atZone(ZoneId.of(TIME_ZONE)).toLocalDateTime().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)));
-
+        return result;
 
     }
 
