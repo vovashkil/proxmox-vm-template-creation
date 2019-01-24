@@ -1,18 +1,18 @@
 package com.project.booking;
 
+import com.project.booking.Customer.Customer;
 import com.project.booking.Persons.Person;
 
 public class Main {
 
-    private Person loginUser;
+    private Customer loginCustomer;
 
     public static void main(String[] args) {
 
         ConsoleApp app = new ConsoleApp();
-        app.startApp();
-
-        //app.loginUser();//Olga :: start select login or register user
-
+        if (app.loginCustomer() != null) {
+            app.startApp();
+        }
     }
 
 }

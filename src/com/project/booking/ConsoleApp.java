@@ -3,6 +3,7 @@ package com.project.booking;
 import com.opencsv.CSVReader;
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
+import com.project.booking.Customer.Customer;
 import com.project.booking.Flight.Flight;
 import com.project.booking.Flight.FlightController;
 
@@ -114,7 +115,8 @@ class ConsoleApp implements FileUtil, DataUtil {
         System.out.println("3. Flights search and booking.");
         System.out.println("4. Booking cancelling.");
         System.out.println("5. My flights.");
-        System.out.println("6. Exit.");
+        System.out.println("6. Close session.");
+        System.out.println("7. Exit.");
         System.out.println("11. test. Generate flights db.");
         System.out.println("12. test. Display all flights.");
         System.out.println("13. test. Load flights from file.");
@@ -123,7 +125,8 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     }
 
-    public void loginUser() {
+    public Customer loginCustomer() {
+        Customer result = null;
         Scanner scanner = new Scanner(System.in);
         for (; ; ) {
             System.out.println("Enter \"login\", \"register\", or \"exit\"");
@@ -132,10 +135,10 @@ class ConsoleApp implements FileUtil, DataUtil {
             switch (input) {
                 case "LOGIN":
                     // get login details
-                    return;
+                    return result;
                 case "REGISTER":
                     // get register details
-                    return;
+                    return result;
                 case "EXIT":
                     // exit the loop
                     System.exit(0);

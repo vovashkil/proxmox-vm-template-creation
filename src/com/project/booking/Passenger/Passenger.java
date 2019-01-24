@@ -3,9 +3,10 @@ package com.project.booking.Passenger;
 import com.project.booking.Constants.Sex;
 import com.project.booking.Persons.Person;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Passenger extends Person {
+public class Passenger extends Person implements Serializable {
     private int pass_ID;
     private String passportNumber;
 
