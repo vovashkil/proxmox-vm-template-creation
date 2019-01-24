@@ -1,6 +1,6 @@
 package com.project.booking.DAO;
 
-interface BookingDAO {
+public interface BookingDAO {
     void addBooking();
 
 }
