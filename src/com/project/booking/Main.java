@@ -2,6 +2,7 @@ package com.project.booking;
 
 import com.opencsv.CSVReader;
 import com.project.booking.Flight.Flight;
+import com.project.booking.Persons.Person;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -17,6 +18,7 @@ import java.util.List;
 public class Main {
 
     private static final String SAMPLE_CSV_FILE_PATH = "./files/db/kbp_online.csv";
+    private Person loginUser;
     private static String DATE_FORMAT = "dd/MM/yyyy";
     private static String DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm";
     private static String TIME_FORMAT = "HH:mm";
@@ -24,9 +26,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-//        ConsoleApp app = new ConsoleApp();
-//        app.startApp();
-//test
+        //ConsoleApp app = new ConsoleApp();
+        //app.startApp();
+
+        //app.loginUser();//Olga :: start select login or regiter user
 
         List<Flight> flights = new ArrayList();
 
