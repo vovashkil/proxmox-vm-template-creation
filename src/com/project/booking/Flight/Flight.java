@@ -6,9 +6,6 @@ import com.project.booking.Passenger.Passenger;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,40 +17,60 @@ public class Flight implements DataUtil {
     private List<Passenger> passengers;
     private int passengersOnBoard;
     private int maxNumSeats;
-    private long departureTime;
+    private long departureDateTime;
     private long estFlightDuration;
 
-    public Flight(String flightNumber, String origin, String destination, int maxNumSeats, long departureTime, long estFlightDuration) {
+    public Flight(String flightNumber, String origin, String destination, int maxNumSeats, long departureDateTime, long estFlightDuration) {
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
         this.passengers = new ArrayList();
         this.passengersOnBoard = 0;
         this.maxNumSeats = maxNumSeats;
-        this.departureTime = departureTime;
+        this.departureDateTime = departureDateTime;
         this.estFlightDuration = estFlightDuration;
     }
 
-    public Flight(String flightNumber, String origin, String destination, int maxNumSeats, String departureTime, String estFlightDuration) {
+    public Flight(String flightNumber, String origin, String destination, int maxNumSeats, String departureDateTime, String estFlightDuration) {
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
         this.passengers = new ArrayList();
         this.passengersOnBoard = 0;
         this.maxNumSeats = maxNumSeats;
-        this.departureTime = timeAsStringParser(departureTime);
+        this.departureDateTime = dateTimeAsStringParser(departureDateTime);
         this.estFlightDuration = timeAsStringParser(estFlightDuration);
+    }
+
+    private long dateTimeAsStringParser(String dateTimeAsString) {
+
+        long result;
+        System.out.println(dateTimeAsString);
+
+        try {
+
+            LocalDateTime dateTime = LocalDateTime.parse(dateTimeAsString, DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+            ZoneOffset zoneOffset = dateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
+            result = dateTime.toInstant(zoneOffset).toEpochMilli();
+
+        } catch (DateTimeParseException e) {
+
+            result = Long.MIN_VALUE;
+
+        }
+
+        return result;
     }
 
     private long timeAsStringParser(String timeAsString) {
 
-        long result= 7777777777L;
+        long result;
 
         try {
             System.out.println("timeAsString = " + timeAsString);
             System.out.println("timeAsString class = " + timeAsString.getClass().getSimpleName());
 
-          result = LocalTime.parse(timeAsString, DateTimeFormatter.ofPattern(DEPARTURE_TIME_FORMAT)).toNanoOfDay();
+          result = LocalTime.parse(timeAsString, DateTimeFormatter.ofPattern(TIME_FORMAT)).toNanoOfDay();
 //            ZoneOffset zoneOffset = ZoneOffset.of(TIME_ZONE);
 //            result = time.toInstant(zoneOffset).toEpochMilli();
             System.out.println("result = " + result);
@@ -97,12 +114,12 @@ public class Flight implements DataUtil {
         this.destination = destination;
     }
 
-    public long getDepartureTime() {
-        return departureTime;
+    public long getDepartureDateTime() {
+        return departureDateTime;
     }
 
-    public void setDepartureTime(long departureTime) {
-        this.departureTime = departureTime;
+    public void setDepartureDateTime(long departureDateTime) {
+        this.departureDateTime = departureDateTime;
     }
 
     public long getEstFlightDuration() {
@@ -137,8 +154,9 @@ public class Flight implements DataUtil {
                 ", origin='" + origin + '\'' +
                 ", destination='" + destination + '\'' +
                 ", departureTime='" +
-                LocalTime.ofSecondOfDay(departureTime/1000).format(DateTimeFormatter.ofPattern(DEPARTURE_TIME_FORMAT))
-                        + '\'' +
+//                LocalDateTime.of(departureDateTime).format(DateTimeFormatter.ofPattern(TIME_FORMAT))
+        Instant.ofEpochMilli(departureDateTime).atZone(ZoneId.of(TIME_ZONE)).toLocalDateTime().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))
+                + '\'' +
                 ", passengersOnBoard=" + passengersOnBoard +
                 ", maxNumSeats=" + maxNumSeats +
                 '}';
