@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Flight implements DataUtil {
 
@@ -145,6 +146,21 @@ public class Flight implements DataUtil {
         passengers.add(passenger);
         return true;
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Flight flight = (Flight) o;
+        return departureDateTime == flight.departureDateTime &&
+                Objects.equals(flightNumber, flight.flightNumber);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(flightNumber, departureDateTime);
     }
 
     @Override

@@ -19,7 +19,7 @@ public class CollectionFlightDAOTest {
     }
 
     @Test
-    public void getAllFamiliesReturnsNonEmptyListWhenFamiliesAdded() {
+    public void getAllFlightsReturnsNonEmptyListWhenFlightsAdded() {
 
         CollectionFlightDAO flightsCollection = new CollectionFlightDAO();
 

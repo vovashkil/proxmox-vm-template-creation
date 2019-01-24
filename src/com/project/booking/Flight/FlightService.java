@@ -23,6 +23,12 @@ public class FlightService {
 
     }
 
+    public void saveFlight(Flight flight) {
+
+        flightDao.saveFlight(flight);
+
+    }
+
     public void saveData(String filePath) {
 
         flightDao.saveData(filePath);

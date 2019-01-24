@@ -16,6 +16,12 @@ public class FlightController {
 
     }
 
+    public void saveFlight(Flight flight) {
+
+        flightService.saveFlight(flight);
+
+    }
+
     public void saveData(String filePath) {
 
         flightService.saveData(filePath);

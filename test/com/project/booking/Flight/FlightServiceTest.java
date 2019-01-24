@@ -15,14 +15,14 @@ public class FlightServiceTest {
     }
 
     @Test
-    public void getAllFamiliesReturnsNonEmptyListWhenFamiliesAdded() {
+    public void getAllFlightsReturnsNonEmptyListWhenFlightsAdded() {
 
         FlightService flightsService = new FlightService();
 
 
-        flightsService.getAllFlights().add(new Flight("flight1","orig1", "dest1", 200, 0, 0));
-        flightsService.getAllFlights().add(new Flight("flight2","orig1", "dest2", 200, 0, 0));
-        flightsService.getAllFlights().add(new Flight("flight3","orig1", "dest3", 200, 0, 0));
+        flightsService.saveFlight(new Flight("flight1","orig1", "dest1", 200, 0, 0));
+        flightsService.saveFlight(new Flight("flight2","orig1", "dest2", 200, 0, 0));
+        flightsService.saveFlight(new Flight("flight3","orig1", "dest3", 200, 0, 0));
 
         int result = flightsService.getAllFlights().size();
 
