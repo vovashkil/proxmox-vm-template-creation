@@ -1,6 +1,7 @@
 package com.project.booking;
 
 import com.opencsv.CSVReader;
+import com.project.booking.Booking.BookingController;
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
 import com.project.booking.Flight.Flight;
@@ -18,6 +19,14 @@ class ConsoleApp implements FileUtil, DataUtil {
     void startApp() {
 
         FlightController flightsDB = new FlightController();
+        BookingController bookingsDB = new BookingController();
+
+        flightsDB.readData(FLIGHTS_FILE_PATH);
+        bookingsDB.readData(BOOKINGS_FILE_PATH);
+
+        int index = 0; // to use where index is needed
+        int start = 0; // start of range
+        int end = 0; // end of range
 
         boolean control = true;
 
@@ -55,6 +64,12 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     System.out.println("Displaying flight information...");
 
+                    start = 1;
+                    end = flightsDB.getAllFlights().size();
+                    index = parseAndValidateInputInteger("Enter flight order number from " +
+                            start + " to " + end + " : ", start, end) -1;
+                    System.out.println(flightsDB.getFlightById(index));
+
                     break;
 
                 case 3:
@@ -69,7 +84,12 @@ class ConsoleApp implements FileUtil, DataUtil {
                     break;
 
                 case 6:
+
                     control = false;
+
+                    flightsDB.saveData(FLIGHTS_FILE_PATH);
+                    bookingsDB.saveData(BOOKINGS_FILE_PATH);
+
                     break;
 
                 case 11:
@@ -205,6 +225,36 @@ class ConsoleApp implements FileUtil, DataUtil {
         return result;
 
     }
+
+    private int parseAndValidateInputInteger(String message, int startRange, int endRange) {
+
+        int result = 0;
+        boolean control = true;
+
+        System.out.print(message);
+
+        while (control) {
+            Scanner input = new Scanner(System.in);
+
+            try {
+
+                result = input.nextInt();
+
+            } catch (InputMismatchException e) {
+
+                System.out.print("You entered incorrect type. ");
+                result = -1;
+
+            }
+
+            if (result >= startRange && result <= endRange) control = false;
+            else System.out.print("Enter correct number between " +
+                    startRange + " and " + endRange + " : ");
+
+        }
+        return result;
+    }
+
 
 
 }
