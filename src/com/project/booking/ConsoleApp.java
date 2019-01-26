@@ -64,11 +64,7 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     System.out.println("Displaying flight information...");
 
-                    start = 1;
-                    end = flightsDB.getAllFlights().size();
-                    index = parseAndValidateInputInteger("Enter flight order number from " +
-                            start + " to " + end + " : ", start, end) - 1;
-                    System.out.println(flightsDB.getFlightById(index));
+                    displayingFlightInformation(flightsDB);
 
                     break;
 
@@ -297,8 +293,39 @@ class ConsoleApp implements FileUtil, DataUtil {
 
         System.out.printf("%s\n", DASHES);
 
+    }
 
+    private void  displayingFlightInformation(FlightController flightsDB) {
 
+        int start = 1;
+        int end = flightsDB.getAllFlights().size();
+
+        int index = parseAndValidateInputInteger("Enter flight order number from " +
+                start + " to " + end + " : ", start, end) - 1;
+
+        System.out.println(flightsDB.getFlightById(index));
+
+    }
+
+    private String parseAndValidateFlightNumber(String message) {
+
+        String result = "";
+        String textPattern = "^[A-Z][a-z]+";
+        boolean control = true;
+
+        System.out.print(message);
+
+        Scanner input = new Scanner(System.in);
+
+        while (control) {
+
+            result = input.nextLine().trim();
+
+            if (result.trim().matches(textPattern)) control = false;
+            else System.out.print("Enter correct Flight number " + textPattern + " (e.g. Vasia): ");
+
+        }
+        return result;
     }
 
 }
