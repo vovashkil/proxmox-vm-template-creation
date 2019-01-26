@@ -152,5 +152,14 @@ public class Flight implements DataUtil, Serializable {
                 '}';
     }
 
+    public String prettyFormat() {
+        return flightNumber + " | " +
+                Instant.ofEpochMilli(departureDateTime)
+                        .atZone(ZoneId.of(TIME_ZONE))
+                        .toLocalDateTime()
+                        .format(DateTimeFormatter
+                                .ofPattern(TIME_FORMAT)) + " | " +
+                destination;
+    }
 
 }

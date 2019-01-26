@@ -12,7 +12,9 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class ConsoleApp implements FileUtil, DataUtil {
 
@@ -53,10 +55,7 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     System.out.println("Displaying online table...");
 
-                    flightsDB.getAllFlights()
-                            .stream()
-                            .sorted((a, b) -> (int) (a.getDepartureDateTime() - b.getDepartureDateTime()))
-                            .forEach(System.out::println);
+                    displayingOnlineTable(flightsDB);
 
                     break;
 
@@ -67,7 +66,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                     start = 1;
                     end = flightsDB.getAllFlights().size();
                     index = parseAndValidateInputInteger("Enter flight order number from " +
-                            start + " to " + end + " : ", start, end) -1;
+                            start + " to " + end + " : ", start, end) - 1;
                     System.out.println(flightsDB.getFlightById(index));
 
                     break;
@@ -134,7 +133,7 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     private static void printMenuMain() {
 
-        System.out.println("1. Departures.");
+        System.out.println("1. Online table.");
         System.out.println("2. Flight information.");
         System.out.println("3. Flights search and booking.");
         System.out.println("4. Booking cancelling.");
@@ -255,7 +254,49 @@ class ConsoleApp implements FileUtil, DataUtil {
         return result;
     }
 
+    private static void displayingOnlineTable(FlightController flightsDB) {
 
+        System.out.printf("%-64s\n", "Online Table Airport: Kiev Boryspil, "
+                + LocalDateTime.now(ZoneId.of(TIME_ZONE))
+                .format(DateTimeFormatter
+                .ofPattern(DATE_TIME_FORMAT)));
+
+        String DASHES = new String(new char[71]).replace("\0", "-");
+        System.out.printf("%s\n", DASHES);
+
+        System.out.printf("| %-3s | %-7s | %-10s | %-5s | %-30s |\n",
+                "ID", "Flight", "Date", "Time", "Destination"
+        );
+
+        System.out.printf("%s\n", DASHES);
+
+        AtomicInteger counter = new AtomicInteger(1);
+
+        flightsDB.getAllFlights()
+                .stream()
+                .sorted((a, b) -> (int) (a.getDepartureDateTime() - b.getDepartureDateTime()))
+                .forEach(flight -> System.out.printf("| %-3d | %-7s | %-10s | %-5s | %-30s |\n",
+                        counter.getAndIncrement(),
+                        flight.getFlightNumber(),
+                        Instant.ofEpochMilli(flight.getDepartureDateTime())
+                                .atZone(ZoneId.of(TIME_ZONE))
+                                .toLocalDateTime()
+                                .format(DateTimeFormatter
+                                        .ofPattern(DATE_FORMAT)),
+                        Instant.ofEpochMilli(flight.getDepartureDateTime())
+                                .atZone(ZoneId.of(TIME_ZONE))
+                                .toLocalDateTime()
+                                .format(DateTimeFormatter
+                                        .ofPattern(TIME_FORMAT)),
+                        flight.getDestination()
+
+                ));
+
+        System.out.printf("%s\n", DASHES);
+
+
+
+    }
 
 }
 
