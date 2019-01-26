@@ -160,6 +160,7 @@ public class Flight implements DataUtil, Serializable {
                         .format(DateTimeFormatter
                                 .ofPattern(TIME_FORMAT)) + " | " +
                 destination;
+
     }
 
 }
