@@ -4,7 +4,9 @@ import com.opencsv.CSVReader;
 import com.project.booking.Booking.BookingController;
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
+import com.project.booking.Constants.Sex;
 import com.project.booking.Customer.Customer;
+import com.project.booking.Customer.CustomerController;
 import com.project.booking.Flight.Flight;
 import com.project.booking.Flight.FlightController;
 
@@ -12,12 +14,20 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class ConsoleApp implements FileUtil, DataUtil {
+
+    private final CustomerController customersDB;
+
+    public ConsoleApp() {
+        this.customersDB = new CustomerController();
+        customersDB.readData(CUSTOMERS_FILE_PATH);
+    }
 
     void startApp() {
 
@@ -38,7 +48,7 @@ class ConsoleApp implements FileUtil, DataUtil {
             printMenuMain();
 
             Scanner input = new Scanner(System.in);
-            System.out.print("Please enter your choice [1-6]: ");
+            System.out.print("Please enter your choice [1-7]: ");
             int choice;
 
             try {
@@ -78,11 +88,13 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                 case 5:
                     break;
-
                 case 6:
+                    break;
+                case 7:
 
                     control = false;
 
+                    customersDB.saveData(CUSTOMERS_FILE_PATH);
                     flightsDB.saveData(FLIGHTS_FILE_PATH);
                     bookingsDB.saveData(BOOKINGS_FILE_PATH);
 
@@ -147,6 +159,11 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     public Customer loginCustomer() {
         Customer result = null;
+        String loginName;
+        String password;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
         Scanner scanner = new Scanner(System.in);
         for (; ; ) {
             System.out.println("Enter \"login\", \"register\", or \"exit\"");
@@ -154,10 +171,60 @@ class ConsoleApp implements FileUtil, DataUtil {
 
             switch (input) {
                 case "LOGIN":
-                    // get login details
+                    System.out.print("Enter LoginName: ");
+                    loginName = scanner.nextLine();
+                    System.out.print("Password: ");
+                    password = scanner.nextLine();
+                    result = customersDB.getCustomerByLogin(loginName, password);
+                    if (result != null) {
+                        System.out.printf("%s %s, Welcome to booking!!!\n", result.getSurname(), result.getName());
+
+                }
+/*
+  JOptionPane.showMessageDialog(null,"Invalid User Name or Password","Error",JOptionPane.ERROR_MESSAGE);
+
+if (username.equals(Username) && password.equals(Password)) {
+
+        System.out.println("Access Granted! Welcome!");
+    }
+
+    else if (username.equals(Username)) {
+        System.out.println("Invalid Password!");
+    } else if (password.equals(Password)) {
+        System.out.println("Invalid Username!");
+    } else {
+        System.out.println("Invalid Username & Password!");
+    }
+
+    if (x == rec.getString("users_name")) {
+                if (y == rec.getString("users_password")) {
+                    System.out.println("Logged in!");
+                } else {
+                    System.out.println("Password did not match username!");
+                }
+            } else {
+                    [color=red]System.out.println("Username did not match the database");[/color]
+            }
+* */
                     return result;
                 case "REGISTER":
-                    // get register details
+                    System.out.println("Enter your personal data, please... ");
+                    System.out.print("LoginName: ");
+                    loginName = scanner.nextLine().trim();
+                    System.out.print("Password: ");
+                    password = scanner.nextLine().trim();
+                    System.out.print("Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Surname: ");
+                    String surname = scanner.nextLine();
+                    System.out.print("BirthDate (dd/MM/yyyy): ");
+                    Long birthdate = LocalDate.parse(scanner.nextLine(), formatter).atStartOfDay(ZoneId.of(TIME_ZONE)).toEpochSecond();
+                    System.out.print("Sex (M - male, F - female): ");
+                    String sex = scanner.nextLine();
+                    //result = new Customer(name, surname, birthdate, Sex.valueOf(sex), loginName, password);
+                    result = new Customer(name, surname, birthdate, Sex.FEMALE, loginName, password);
+                    customersDB.saveCustomer(result);
+                    System.out.println(result.toString());
                     return result;
                 case "EXIT":
                     // exit the loop
@@ -258,7 +325,7 @@ class ConsoleApp implements FileUtil, DataUtil {
         System.out.printf("%-64s\n", "Online Table Airport: Kiev Boryspil, "
                 + LocalDateTime.now(ZoneId.of(TIME_ZONE))
                 .format(DateTimeFormatter
-                .ofPattern(DATE_TIME_FORMAT)));
+                        .ofPattern(DATE_TIME_FORMAT)));
 
         String DASHES = new String(new char[71]).replace("\0", "-");
         System.out.printf("%s\n", DASHES);
@@ -295,7 +362,7 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     }
 
-    private void  displayingFlightInformation(FlightController flightsDB) {
+    private void displayingFlightInformation(FlightController flightsDB) {
 
         int start = 1;
         int end = flightsDB.getAllFlights().size();
