@@ -3,10 +3,12 @@ package com.project.booking.Customer;
 import com.project.booking.Constants.Sex;
 import com.project.booking.Persons.Person;
 
-import java.util.Objects;
+import java.io.Serializable;
 
-public class Customer extends Person {
+public class Customer extends Person implements Serializable {
     private int cust_ID;
+    private String loginName;
+    private String password;
     private boolean isVIP = false;
 
     private static int count = 0;
@@ -15,27 +17,37 @@ public class Customer extends Person {
         this.cust_ID = ++count;
     }
 
-    public Customer(String name, String surname, long birthDate, Sex sex) {
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isVIP() {
+        return isVIP;
+    }
+
+    public void setVIP(boolean VIP) {
+        isVIP = VIP;
+    }
+
+    public Customer(String name, String surname, long birthDate, Sex sex, String loginName, String password) {
         super(name, surname, birthDate, sex);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return cust_ID == customer.cust_ID;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(cust_ID);
+        this.loginName = loginName;
+        this.password = password;
     }
 
     @Override
     public String toString() {
         return "Customer{" +
-                "cust_ID=" + cust_ID +
+                "loginName='" + loginName + '\'' +
+                ", password='" + password + '\'' +
                 ", isVIP=" + isVIP +
                 "} " + super.toString();
     }
