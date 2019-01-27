@@ -76,6 +76,10 @@ public class Flight implements DataUtil, Serializable {
         return passengers.size();
     }
 
+    public int getMaxNumSeats() {
+        return maxNumSeats;
+    }
+
     public boolean addPassenger(Passenger passenger) {
 
         if (!passengers.contains(passenger) &&
@@ -119,8 +123,7 @@ public class Flight implements DataUtil, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Flight flight = (Flight) o;
-        return departureDateTime == flight.departureDateTime &&
-                Objects.equals(flightNumber, flight.flightNumber);
+        return flightNumber.equals(flight.getFlightNumber());
     }
 
     @Override
@@ -149,6 +152,9 @@ public class Flight implements DataUtil, Serializable {
                 ", destination='" + destination + '\'' +
                 ", passengersOnBoard=" + getPassengersOnBoard() +
                 ", maxNumSeats=" + maxNumSeats +
+                ", duration=" +
+                LocalTime.ofNanoOfDay(estFlightDuration)
+                        .format(DateTimeFormatter.ofPattern(TIME_FORMAT)) +
                 '}';
     }
 

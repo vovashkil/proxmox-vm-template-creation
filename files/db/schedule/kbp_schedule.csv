@@ -1,0 +1,168 @@
+Flight,Time,Destination,Carrier,Terminal,Gate,Status,Duration
+BK2081,03:00,Sharm El Sheikh,Bukovyna Airlines,D,D12,Scheduled,01:50
+7W7051,03:30,Sharm El Sheikh,Wind Rose,D,D13,Scheduled,01:50
+PS5201,03:30,Sharm El Sheikh,Ukraine International Airlines,D,D4,Scheduled,01:50
+QU4431,05:00,Sharm El Sheikh,Azur Air Ukraine,D,D15,Scheduled,01:50
+OK0917,05:05,Prague,CSA Czech Airlines,D,D5,Scheduled,01:50
+QS8917,05:05,Prague,Smart Wings,D,D5,Scheduled,01:50
+AZ4297,05:05,Prague,Alitaila,D,D5,Scheduled,01:50
+PS9717,05:05,Prague,Ukraine International Airlines,D,D5,Scheduled,01:50
+LH2547,05:45,Munich,Lufthansa,D,D7,Scheduled,01:50
+LH1493,06:00,Frankfurt,Lufthansa,D,D6,Scheduled,01:50
+UA9149,06:00,Frankfurt,United Air Lines Inc.,D,D6,Scheduled,01:50
+AC9594,06:00,Frankfurt,Air Canada,D,D6,Scheduled,01:50
+QU4433,06:30,Sharm El Sheikh,Azur Air Ukraine,D,D14,Scheduled,01:50
+OS0668,06:55,Vienna,Austrian Airlines,D,D8,Scheduled,01:50
+PS9814,06:55,Vienna,Ukraine International Airlines,D,D8,Scheduled,01:50
+PS0781,07:00,Tel Aviv,Ukraine International Airlines,D,D1,Scheduled,01:50
+PQ0311,07:25,Haikou,Skyup Airlines,D,D15,Scheduled,01:50
+PS7211,07:30,Sharm El Sheikh,Ukraine International Airlines,D,D12,Scheduled,01:50
+PS6013,08:00,Sharm El Sheikh,Ukraine International Airlines,D,D7,Scheduled,01:50
+7W0755,09:05,Sofia,Wind Rose,D,D16,Scheduled,01:50
+PS9055,09:05,Sofia,Ukraine International Airlines,D,D16,Scheduled,01:50
+B20844,09:20,Minsk,Belavia,D,D2,Scheduled,01:50
+EY8473,09:20,Minsk,Etihad Airways,D,D2,Scheduled,01:50
+PS0185,09:20,Riga,Ukraine International Airlines,D,D8,Scheduled,01:50
+TP8224,09:25,Vienna,TAP Portugal,D,D10,Scheduled,01:50
+PS0845,09:25,Vienna,Ukraine International Airlines,D,D10,Scheduled,01:50
+TP6753,09:25,Berlin,TAP Portugal,D,D5,Scheduled,01:50
+PS0423,09:25,Berlin,Ukraine International Airlines,D,D5,Scheduled,01:50
+OS7172,09:25,Vienna,Austrian Airlines,D,D10,Scheduled,01:50
+PS0177,09:25,Vilnius,Ukraine International Airlines,D,D13,Scheduled,01:50
+PS0711,09:30,Istanbul,Ukraine International Airlines,D,D7,Scheduled,01:50
+TK8811,09:30,Istanbul,Turkish Airlines,D,D7,Scheduled,01:50
+BT0401,09:40,Riga,Air Baltic,D,D16,Scheduled,01:50
+PS0415,09:40,Munich,Ukraine International Airlines,D,D1,Scheduled,01:50
+TP8242,09:40,Munich,TAP Portugal,D,D1,Scheduled,01:50
+PS9001,09:40,Dnipro,Ukraine International Airlines,D,D20,Scheduled,01:50
+7W0101,09:40,Dnipro,Wind Rose,D,D20,Scheduled,01:50
+AF3375,09:45,Paris,Air France,D,D4,Scheduled,01:50
+PS0127,09:45,Paris,Ukraine International Airlines,D,D4,Scheduled,01:50
+PS0889,09:45,Minsk,Ukraine International Airlines,D,D12,Scheduled,01:50
+PS0151,09:50,Helsinki,Ukraine International Airlines,D,D14,Scheduled,01:50
+PS0775,09:55,Tel Aviv,Ukraine International Airlines,D,D11,Scheduled,01:50
+PS0111,10:00,London,Ukraine International Airlines,D,D8,Scheduled,01:50
+TP8238,10:00,Prague,TAP Portugal,D,D15,Scheduled,01:50
+OK4917,10:00,Prague,CSA Czech Airlines,D,D15,Scheduled,01:50
+TP8228,10:00,London,TAP Portugal,D,D8,Scheduled,01:50
+PS0057,10:00,Odesa,Ukraine International Airlines,D,D18,Scheduled,01:50
+PS0101,10:00,Amsterdam,Ukraine International Airlines,D,D9,Scheduled,01:50
+TP8240,10:00,Amsterdam,TAP Portugal,D,D9,Scheduled,01:50
+PS0807,10:00,Prague,Ukraine International Airlines,D,D15,Scheduled,01:50
+KL3097,10:00,Amsterdam,KLM,D,D9,Scheduled,01:50
+TP8220,10:05,Rome,TAP Portugal,D,D13,Scheduled,01:50
+PS0305,10:05,Rome,Ukraine International Airlines,D,D13,Scheduled,01:50
+PS0079,10:10,Ivano-Frankivsk,Ukraine International Airlines,D,D19,Scheduled,01:50
+PS0341,10:15,Larnaca,Ukraine International Airlines,D,D7,Scheduled,01:50
+PS0613,10:15,Yerevan,Ukraine International Airlines,D,D16,Scheduled,01:50
+PS0287,10:25,Beijing,Ukraine International Airlines,D,D10,Scheduled,01:50
+TP8210,10:30,Zurich,TAP Portugal,D,D12,Scheduled,01:50
+PS0411,10:30,Dusseldorf,Ukraine International Airlines,D,D14,Scheduled,01:50
+PS0471,10:30,Zurich,Ukraine International Airlines,D,D12,Scheduled,01:50
+KL3149,10:35,Lviv,KLM,D,D21,Scheduled,01:50
+PS0035,10:35,Lviv,Ukraine International Airlines,D,D21,Scheduled,01:50
+PS0311,10:40,Milan,Ukraine International Airlines,D,D15,Scheduled,01:50
+TK0458,10:40,Istanbul,Turkish Airlines,D,D3,Scheduled,01:50
+PS9558,10:40,Istanbul,Ukraine International Airlines,D,D3,Scheduled,01:50
+TP8218,10:40,Milan,TAP Portugal,D,D15,Scheduled,01:50
+PS0485,10:45,Geneva,Ukraine International Airlines,D,D9,Scheduled,01:50
+PS0161,10:45,Copenhagen,Ukraine International Airlines,D,D13,Scheduled,01:50
+TP8214,10:45,Geneva,TAP Portugal,D,D9,Scheduled,01:50
+TP8212,10:50,Frankfurt,TAP Portugal,D,D16,Scheduled,01:50
+PS0401,10:50,Frankfurt,Ukraine International Airlines,D,D16,Scheduled,01:50
+SN4016,10:55,Brussels,Brussels Airlines,D,D5,Scheduled,01:50
+TP8216,10:55,Brussels,TAP Portugal,D,D5,Scheduled,01:50
+PS0779,10:55,Tel Aviv,Ukraine International Airlines,D,D11,Scheduled,01:50
+PS0145,10:55,Brussels,Ukraine International Airlines,D,D5,Scheduled,01:50
+PS0087,11:00,Zaporizhzhia,Ukraine International Airlines,D,D18,Scheduled,01:50
+LY2652,11:00,Tel Aviv,El Al - Israel Airlines,D,D2,Scheduled,01:50
+PS0515,11:25,Tbilisi,Ukraine International Airlines,D,D6,Scheduled,01:50
+PS0231,11:30,New York,Ukraine International Airlines,D,D1,Scheduled,01:50
+A90758,11:40,Tbilisi,Georgian Airways,D,D4,Scheduled,01:50
+TK8809,12:30,Istanbul,Turkish Airlines,D,D12,Scheduled,01:50
+PS0713,12:30,Istanbul,Ukraine International Airlines,D,D12,Scheduled,01:50
+QR0296,12:45,Doha,Qatar Airways Company,D,D8,Scheduled,01:50
+YB0201,12:55,Beirut,Bravo Airways,D,D14,Scheduled,01:50
+7W7955,13:05,Sharm El Sheikh,Wind Rose,D,D13,Scheduled,01:50
+OS0662,13:20,Vienna,Austrian Airlines,D,D4,Scheduled,01:50
+PS9816,13:20,Vienna,Ukraine International Airlines,D,D4,Scheduled,01:50
+G90261,13:30,Sharjah,Air Arabia,D,D7,Scheduled,01:50
+AC9208,13:50,Frankfurt,Air Canada,D,D5,Scheduled,01:50
+LH1491,13:50,Frankfurt,Lufthansa,D,D5,Scheduled,01:50
+UA9097,13:50,Frankfurt,United Air Lines Inc.,D,D5,Scheduled,01:50
+DL9473,13:55,Amsterdam,Delta Air Lines,D,D3,Scheduled,01:50
+PS9386,13:55,Amsterdam,Ukraine International Airlines,D,D3,Scheduled,01:50
+KL1386,13:55,Amsterdam,KLM,D,D3,Scheduled,01:50
+BA0883,14:00,London,British Airways,D,D1,Scheduled,01:50
+TP8237,14:10,Budapest,TAP Portugal,D,D12,Scheduled,01:50
+PS0813,14:10,Budapest,Ukraine International Airlines,D,D12,Scheduled,01:50
+EK2354,14:25,Dubai,Emirates,D,D10,Scheduled,01:50
+FZ0728,14:25,Dubai,Flydubai,D,D10,Scheduled,01:50
+AF1753,14:45,Paris,Air France,D,D3,Scheduled,01:50
+PS0801,14:45,Warsaw,Ukraine International Airlines,D,D8,Scheduled,01:50
+TP8232,14:45,Warsaw,TAP Portugal,D,D8,Scheduled,01:50
+FR3138,14:45,Wroclaw,Ryanair,D,D9,Scheduled,01:50
+KL2388,14:45,Paris,KLM,D,D3,Scheduled,01:50
+PS9263,14:45,Paris,Ukraine International Airlines,D,D3,Scheduled,01:50
+DL8644,14:45,Paris,Delta Air Lines,D,D3,Scheduled,01:50
+PS0049,14:50,Kherson,Ukraine International Airlines,D,D18,Scheduled,01:50
+LO0752,14:50,Warsaw,LOT Polish Airlines,D,D4,Scheduled,01:50
+IA0296,15:00,Baghdad,Iraqi Airways,D,D6,Scheduled,01:50
+PS0025,15:00,Kharkiv,Ukraine International Airlines,D,D19,Scheduled,01:50
+BT0403,15:10,Riga,Air Baltic,D,D13,Scheduled,01:50
+FR3113,15:35,Poznan,Ryanair,D,D1,Scheduled,01:50
+LH2545,15:50,Munich,Lufthansa,D,D5,Scheduled,01:50
+LO0754,17:55,Warsaw,LOT Polish Airlines,D,D4,Scheduled,01:50
+7W0105,18:00,Dnipro,Wind Rose,D,D20,Scheduled,01:50
+PS9005,18:00,Dnipro,Ukraine International Airlines,D,D20,Scheduled,01:50
+LH1495,18:15,Frankfurt,Lufthansa,D,D5,Scheduled,01:50
+B20846,19:05,Minsk,Belavia,D,D2,Scheduled,01:50
+PS0537,19:15,Almaty,Ukraine International Airlines,D,D3,Scheduled,01:50
+PS0373,19:25,Dubai,Ukraine International Airlines,D,D14,Scheduled,01:50
+PS0129,19:30,Paris,Ukraine International Airlines,D,D6,Scheduled,01:50
+TP6755,19:30,Odesa,TAP Portugal,D,D18,Scheduled,01:50
+AF3368,19:30,Paris,Air France,D,D6,Scheduled,01:50
+PS0715,19:30,Istanbul,Ukraine International Airlines,D,D12,Scheduled,01:50
+TK8815,19:30,Istanbul,Turkish Airlines,D,D12,Scheduled,01:50
+PS0071,19:30,Dnipro,Ukraine International Airlines,D,D19,Scheduled,01:50
+PS0777,19:30,Tel Aviv,Ukraine International Airlines,D,D1,Scheduled,01:50
+KL3139,19:30,Odesa,KLM,D,D18,Scheduled,01:50
+PS0055,19:30,Odesa,Ukraine International Airlines,D,D18,Scheduled,01:50
+PS0033,19:35,Lviv,Ukraine International Airlines,D,D20,Scheduled,01:50
+PS0183,19:35,Vilnius,Ukraine International Airlines,D,D7,Scheduled,01:50
+TP8246,19:35,Lviv,TAP Portugal,D,D20,Scheduled,01:50
+KL3137,19:35,Lviv,KLM,D,D20,Scheduled,01:50
+PS0023,19:40,Kharkiv,Ukraine International Airlines,D,D21,Scheduled,01:50
+PS0897,19:40,Chisinau,Ukraine International Airlines,D,D10,Scheduled,01:50
+TP8231,19:40,Kharkiv,TAP Portugal,D,D21,Scheduled,01:50
+9U9897,19:40,Chisinau,Air Moldova,D,D10,Scheduled,01:50
+PS0893,19:40,Minsk,Ukraine International Airlines,D,D11,Scheduled,01:50
+PS0751,19:50,Tehran,Ukraine International Airlines,D,D15,Scheduled,01:50
+PS0843,19:50,Vienna,Ukraine International Airlines,D,D5,Scheduled,01:50
+PS0721,20:00,Ankara,Ukraine International Airlines,D,D16,Scheduled,01:50
+PS0803,20:00,Warsaw,Ukraine International Airlines,D,D4,Scheduled,01:50
+PS0307,20:05,Rome,Ukraine International Airlines,D,D13,Scheduled,01:50
+PS0081,20:10,Ivano-Frankivsk,Ukraine International Airlines,D,D18,Scheduled,01:50
+PS0611,20:10,Yerevan,Ukraine International Airlines,D,D14,Scheduled,01:50
+PS0045,20:10,Kherson,Ukraine International Airlines,D,D22,Scheduled,01:50
+PS0387,20:25,Colombo,Ukraine International Airlines,D,D9,Scheduled,01:50
+PS0099,20:25,Vinnica,Ukraine International Airlines,D,D19,Scheduled,01:50
+PS0517,20:30,Tbilisi,Ukraine International Airlines,D,D8,Scheduled,01:50
+PS0085,20:30,Zaporizhzhia,Ukraine International Airlines,D,D21,Scheduled,01:50
+BT0405,20:35,Riga,Air Baltic,D,D12,Scheduled,01:50
+PS0113,20:35,London,Ukraine International Airlines,D,D1,Scheduled,01:50
+PS0315,20:35,Bergamo,Ukraine International Airlines,D,D15,Scheduled,01:50
+PS0925,20:40,Krakow,Ukraine International Airlines,D,D4,Scheduled,01:50
+PS0147,20:40,Brussels,Ukraine International Airlines,D,D10,Scheduled,01:50
+SN4018,20:40,Brussels,Brussels Airlines,D,D10,Scheduled,01:50
+PS0041,20:40,Chernivtsi,Ukraine International Airlines,D,D20,Scheduled,01:50
+PS0761,20:55,Amman,Ukraine International Airlines,D,D11,Scheduled,01:50
+PS0391,20:55,Delhi,Ukraine International Airlines,D,D3,Scheduled,01:50
+J26601,21:00,Baku,Azerbaijan Airlines,D,D16,Scheduled,01:50
+PS0601,21:00,Baku,Ukraine International Airlines,D,D16,Scheduled,01:50
+TK0460,21:00,Istanbul,Turkish Airlines,D,D2,Scheduled,01:50
+PS9560,21:00,Istanbul,Ukraine International Airlines,D,D2,Scheduled,01:50
+KC0402,21:40,Almaty,Air Astana,D,D5,Scheduled,01:50
+QR0298,23:10,Doha,Qatar Airways Company,D,D8,Scheduled,01:50
+EK2160,23:15,Dubai,Emirates,D,D4,Scheduled,01:50
+FZ0730,23:15,Dubai,Flydubai,D,D4,Scheduled,01:50

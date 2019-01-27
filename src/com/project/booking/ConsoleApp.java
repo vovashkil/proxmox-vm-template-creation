@@ -9,25 +9,37 @@ import com.project.booking.Customer.Customer;
 import com.project.booking.Customer.CustomerController;
 import com.project.booking.Flight.Flight;
 import com.project.booking.Flight.FlightController;
+import com.sun.scenario.effect.Offset;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 class ConsoleApp implements FileUtil, DataUtil {
 
     private final CustomerController customersDB;
+    LocalDateTime currDateTime = LocalDateTime.now(ZoneId.of(TIME_ZONE));
+    private ZoneOffset offset = currDateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
+    private long currentDateTime = currDateTime.toInstant(offset).toEpochMilli();
 
     public ConsoleApp() {
         this.customersDB = new CustomerController();
         customersDB.readData(CUSTOMERS_FILE_PATH);
     }
+
+    public long getCurrentDateTime() {
+        return currentDateTime;
+    }
+
+    public ZoneOffset getZoneOffset() {
+        return offset;
+    }
+
 
     void startApp() {
 
@@ -35,11 +47,7 @@ class ConsoleApp implements FileUtil, DataUtil {
         BookingController bookingsDB = new BookingController();
 
         flightsDB.readData(FLIGHTS_FILE_PATH);
-        bookingsDB.readData(BOOKINGS_FILE_PATH);
-
-        int index = 0; // to use where index is needed
-        int start = 0; // start of range
-        int end = 0; // end of range
+//        bookingsDB.readData(BOOKINGS_FILE_PATH);
 
         boolean control = true;
 
@@ -48,7 +56,7 @@ class ConsoleApp implements FileUtil, DataUtil {
             printMenuMain();
 
             Scanner input = new Scanner(System.in);
-            System.out.print("Please enter your choice [1-7]: ");
+            System.out.print("Please enter your choice [1-8]: ");
             int choice;
 
             try {
@@ -74,7 +82,17 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     System.out.println("Displaying flight information...");
 
-                    displayingFlightInformation(flightsDB);
+                    String flightNumber = parseAndValidateFlightNumber("Enter Flight number: ");
+
+                    if (flightsDB.getAllFlights().stream().map(Flight::getFlightNumber).anyMatch(flightNumber::equalsIgnoreCase))
+
+                        flightsDB.getAllFlights()
+                                .stream().filter(item -> item.getFlightNumber()
+                                .equalsIgnoreCase(flightNumber))
+                                .forEach(ConsoleApp::displayingFlightInformation);
+
+                    else
+                        System.out.println("Sorry, there is no flight " + flightNumber + " in the db.");
 
                     break;
 
@@ -87,22 +105,28 @@ class ConsoleApp implements FileUtil, DataUtil {
                     break;
 
                 case 5:
+
                     break;
+
                 case 6:
+
                     break;
+
                 case 7:
+
+                    System.out.println("Creating new list of flights from schedule...");
+
+                    flightDbFromScheduleFile(flightsDB);
+
+                    break;
+
+                case 8:
 
                     control = false;
 
                     customersDB.saveData(CUSTOMERS_FILE_PATH);
                     flightsDB.saveData(FLIGHTS_FILE_PATH);
                     bookingsDB.saveData(BOOKINGS_FILE_PATH);
-
-                    break;
-
-                case 11:
-
-                    fillUpFlightDatabaseAutomatically(flightsDB);
 
                     break;
 
@@ -148,8 +172,8 @@ class ConsoleApp implements FileUtil, DataUtil {
         System.out.println("4. Booking cancelling.");
         System.out.println("5. My flights.");
         System.out.println("6. Close session.");
-        System.out.println("7. Exit.");
-        System.out.println("11. test. Generate flights db.");
+        System.out.println("7. Reset/Create new flights db from schedule file.");
+        System.out.println("8. Exit.");
         System.out.println("12. test. Display all flights.");
         System.out.println("13. test. Load flights from file.");
         System.out.println("14. test. Save flights to file.");
@@ -179,7 +203,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                     if (result != null) {
                         System.out.printf("%s %s, Welcome to booking!!!\n", result.getSurname(), result.getName());
 
-                }
+                    }
 /*
   JOptionPane.showMessageDialog(null,"Invalid User Name or Password","Error",JOptionPane.ERROR_MESSAGE);
 
@@ -237,19 +261,97 @@ if (username.equals(Username) && password.equals(Password)) {
         }
     }
 
-    private static void fillUpFlightDatabaseAutomatically(FlightController flightsDB) {
+    private static void displayingOnlineTable(FlightController flightsDB) {
 
-        System.out.println("Generating database of flights...");
+        final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s |\n";
+        final String DASHES = new String(new char[76]).replace("\0", "-");
 
-        LocalDateTime dateTime = LocalDateTime.now(ZoneId.of(TIME_ZONE));
-        ZoneOffset zoneOffset = dateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
-        long start = dateTime.toInstant(zoneOffset).toEpochMilli();
+        System.out.printf("%-64s\n", "Online Table Airport: Kiev Boryspil, "
+                + LocalDateTime.now(ZoneId.of(TIME_ZONE))
+                .format(DateTimeFormatter
+                        .ofPattern(DATE_TIME_FORMAT)));
 
+        System.out.printf("%s\n", DASHES);
+
+        System.out.printf(PRINT_FORMAT,
+                "Flight", "Date", "Time", "Destination", "Duration"
+        );
+
+        System.out.printf("%s\n", DASHES);
+
+        flightsDB.getAllFlights()
+                .stream()
+                .sorted((a, b) -> (int) (a.getDepartureDateTime() - b.getDepartureDateTime()))
+                .forEach(flight -> System.out.printf(PRINT_FORMAT,
+                        flight.getFlightNumber(),
+                        Instant.ofEpochMilli(flight.getDepartureDateTime())
+                                .atZone(ZoneId.of(TIME_ZONE))
+                                .toLocalDateTime()
+                                .format(DateTimeFormatter
+                                        .ofPattern(DATE_FORMAT)),
+                        Instant.ofEpochMilli(flight.getDepartureDateTime())
+                                .atZone(ZoneId.of(TIME_ZONE))
+                                .toLocalDateTime()
+                                .format(DateTimeFormatter
+                                        .ofPattern(TIME_FORMAT)),
+                        flight.getDestination(),
+                        LocalTime.ofNanoOfDay(flight.getEstFlightDuration())
+                                .format(DateTimeFormatter.ofPattern(TIME_FORMAT))
+
+                ));
+
+        System.out.printf("%s\n", DASHES);
+
+    }
+
+    private static void displayingFlightInformation(Flight flight) {
+
+        final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s | %15s |\n";
+        final String DASHES = new String(new char[94]).replace("\0", "-");
+
+        System.out.printf("%s\n", "Flight infomation:");
+        System.out.printf("%s\n", DASHES);
+
+        System.out.printf(PRINT_FORMAT,
+                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats"
+        );
+
+        System.out.printf("%s\n", DASHES);
+
+        System.out.printf(PRINT_FORMAT,
+                flight.getFlightNumber(),
+                Instant.ofEpochMilli(flight.getDepartureDateTime())
+                        .atZone(ZoneId.of(TIME_ZONE))
+                        .toLocalDateTime()
+                        .format(DateTimeFormatter
+                                .ofPattern(DATE_FORMAT)),
+                Instant.ofEpochMilli(flight.getDepartureDateTime())
+                        .atZone(ZoneId.of(TIME_ZONE))
+                        .toLocalDateTime()
+                        .format(DateTimeFormatter
+                                .ofPattern(TIME_FORMAT)),
+                flight.getDestination(),
+                LocalTime.ofNanoOfDay(flight.getEstFlightDuration())
+                        .format(DateTimeFormatter.ofPattern(TIME_FORMAT)),
+                flight.getMaxNumSeats() - flight.getPassengersOnBoard()
+
+        );
+
+        System.out.printf("%s\n", DASHES);
+
+    }
+
+    private static void flightDbFromScheduleFile(FlightController flightsDB) {
+
+        System.out.println("Resetting/Generating new database of flights...");
+
+        LocalTime currentTime = LocalTime.now(ZoneId.of(TIME_ZONE));
+        LocalDate currentDate = LocalDate.now(ZoneId.of(TIME_ZONE));
 
         try (
 
-                Reader reader = Files.newBufferedReader(Paths.get(SAMPLE_CSV_FILE_PATH));
-                CSVReader csvReader = new CSVReader(reader); // Reading records one by one in a String array
+                Reader reader = Files.newBufferedReader(Paths.get(KBP_SCHEDULE_FILE_PATH));
+                CSVReader csvReader = new CSVReader(reader, ',', '\'', 1);
 
         ) {
 
@@ -257,11 +359,25 @@ if (username.equals(Username) && password.equals(Password)) {
 
             while ((nextRecord = csvReader.readNext()) != null) {
 
+                long flightDepartureTimeLong = parseTime(nextRecord[1]);
+                long flightDurationTimeLong = parseTime(nextRecord[7]);
+                LocalDate flightDepartureDate = currentDate;
+
+                if (flightDepartureTimeLong <= currentTime.toNanoOfDay())
+                    flightDepartureDate = currentDate.plusDays(1);
+
+                long departureDateTimeLong = dateTimeToLong(
+                        LocalDateTime.of(
+                                flightDepartureDate,
+                                LocalTime.ofNanoOfDay(flightDepartureTimeLong)
+                        )
+                );
+
                 flightsDB.saveFlight(
 
                         new Flight(nextRecord[0],
-                                departureDateTimeGenerator(start),
-                                54000000,
+                                departureDateTimeLong,
+                                flightDurationTimeLong,
                                 "Kiev Boryspil",
                                 nextRecord[2],
                                 150
@@ -279,15 +395,23 @@ if (username.equals(Username) && password.equals(Password)) {
 
     }
 
-    public static long departureDateTimeGenerator(long start) {
+    public static long parseTime(String str) {
 
-        long result = 0L;
+        LocalTime time = LocalTime.now(ZoneId.of(TIME_ZONE));
 
-        long end = start + 24 * 60 * 60 * 1000;
+        str = str.replaceAll("[^0-9,:]", "");
 
-        result = start + ((long) (new Random().nextDouble() * (end - start)));
+        try {
 
-        return result;
+            time = LocalTime.parse(str, DateTimeFormatter.ofPattern(TIME_FORMAT));
+
+        } catch (DateTimeParseException e) {
+
+            System.out.println(e.getStackTrace());
+
+        }
+
+        return time.toNanoOfDay();
 
     }
 
@@ -320,47 +444,6 @@ if (username.equals(Username) && password.equals(Password)) {
         return result;
     }
 
-    private static void displayingOnlineTable(FlightController flightsDB) {
-
-        System.out.printf("%-64s\n", "Online Table Airport: Kiev Boryspil, "
-                + LocalDateTime.now(ZoneId.of(TIME_ZONE))
-                .format(DateTimeFormatter
-                        .ofPattern(DATE_TIME_FORMAT)));
-
-        String DASHES = new String(new char[71]).replace("\0", "-");
-        System.out.printf("%s\n", DASHES);
-
-        System.out.printf("| %-3s | %-7s | %-10s | %-5s | %-30s |\n",
-                "ID", "Flight", "Date", "Time", "Destination"
-        );
-
-        System.out.printf("%s\n", DASHES);
-
-        AtomicInteger counter = new AtomicInteger(1);
-
-        flightsDB.getAllFlights()
-                .stream()
-                .sorted((a, b) -> (int) (a.getDepartureDateTime() - b.getDepartureDateTime()))
-                .forEach(flight -> System.out.printf("| %-3d | %-7s | %-10s | %-5s | %-30s |\n",
-                        counter.getAndIncrement(),
-                        flight.getFlightNumber(),
-                        Instant.ofEpochMilli(flight.getDepartureDateTime())
-                                .atZone(ZoneId.of(TIME_ZONE))
-                                .toLocalDateTime()
-                                .format(DateTimeFormatter
-                                        .ofPattern(DATE_FORMAT)),
-                        Instant.ofEpochMilli(flight.getDepartureDateTime())
-                                .atZone(ZoneId.of(TIME_ZONE))
-                                .toLocalDateTime()
-                                .format(DateTimeFormatter
-                                        .ofPattern(TIME_FORMAT)),
-                        flight.getDestination()
-
-                ));
-
-        System.out.printf("%s\n", DASHES);
-
-    }
 
     private void displayingFlightInformation(FlightController flightsDB) {
 
@@ -377,7 +460,7 @@ if (username.equals(Username) && password.equals(Password)) {
     private String parseAndValidateFlightNumber(String message) {
 
         String result = "";
-        String textPattern = "^[A-Z][a-z]+";
+        String textPattern = "^[A-Za-z][A-Za-z][0-9]+";
         boolean control = true;
 
         System.out.print(message);
@@ -389,11 +472,19 @@ if (username.equals(Username) && password.equals(Password)) {
             result = input.nextLine().trim();
 
             if (result.trim().matches(textPattern)) control = false;
-            else System.out.print("Enter correct Flight number " + textPattern + " (e.g. Vasia): ");
+            else System.out.print("Enter correct Flight number " + textPattern + " (e.g. PS0779): ");
 
         }
         return result;
     }
+
+    static long dateTimeToLong(LocalDateTime dateTime) {
+
+        ZoneOffset zoneOffset = dateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
+        return dateTime.toInstant(zoneOffset).toEpochMilli();
+
+    }
+
 
 }
 
