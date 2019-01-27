@@ -106,12 +106,35 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     String destination = parseAndValidateInputString(
                             "Enter Destination: ",
-                            "^[A-Z][a-z]+",
+                            "^[A-Z][A-Za-z ]+",
                             "Destination",
                             "Frankfurt"
                     );
 
-                    System.out.println(destination);
+                    String date = parseAndValidateInputString(
+                            "Enter Date: ",
+                            "^[0-9][0-9]/[0-9][0-9]/[2][0][1-2][0-9]",
+                            "Date",
+                            "25/11/2019"
+                    );
+
+                    int number = parseAndValidateInputInteger(
+                            "Enter number of passengers: ",
+                            1,
+                            flightsDB.getAllFlights()
+                                    .stream()
+                                    .mapToInt(Flight::getMaxNumSeats)
+                                    .max().orElse(-1)
+                    );
+
+                    flightsDB.getAllFlights()
+                            .stream().filter(item -> item.getDestination()
+                            .equalsIgnoreCase(destination))
+                            .forEach(ConsoleApp::displayingFlightInformation);
+
+
+
+
 
                     break;
 
