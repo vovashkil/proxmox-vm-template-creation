@@ -131,12 +131,6 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     break;
 
-                case 11:
-
-                    fillUpFlightDatabaseAutomatically(flightsDB);
-
-                    break;
-
                 case 12:
 
                     System.out.println("Displaying entire list of flights...");
@@ -179,7 +173,8 @@ class ConsoleApp implements FileUtil, DataUtil {
         System.out.println("4. Booking cancelling.");
         System.out.println("5. My flights.");
         System.out.println("6. Close session.");
-        System.out.println("7. Exit.");
+        System.out.println("7. Resetting/Re-creating flights db from schedule file.");
+        System.out.println("8. Exit.");
         System.out.println("11. test. Generate flights db.");
         System.out.println("12. test. Display all flights.");
         System.out.println("13. test. Load flights from file.");
