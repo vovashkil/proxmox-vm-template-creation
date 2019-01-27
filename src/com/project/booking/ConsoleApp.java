@@ -18,6 +18,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 class ConsoleApp implements FileUtil, DataUtil {
 
@@ -96,6 +97,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                                 .forEach(ConsoleApp::displayingFlightInformation);
 
                     else
+
                         System.out.println("Sorry, there is no flight " + flightNumber + " in the db.");
 
                     break;
@@ -127,14 +129,17 @@ class ConsoleApp implements FileUtil, DataUtil {
                                     .max().orElse(-1)
                     );
 
-                    flightsDB.getAllFlights()
-                            .stream().filter(item -> item.getDestination()
-                            .equalsIgnoreCase(destination))
-                            .forEach(ConsoleApp::displayingFlightInformation);
+                    List<Flight> searchResult = flightsDB.getAllFlights()
+                            .stream()
+                            .filter(
+                                    item -> item.getDestination().equalsIgnoreCase(destination) &&
+                                            item.getDepartureDateTime() > parseDate(date) &&
+                                            (item.getMaxNumSeats() - item.getPassengersOnBoard()) >= number
+                            )
+                            .sorted(Comparator.comparingLong(Flight::getDepartureDateTime))
+                            .collect(Collectors.toList());
 
-
-
-
+                    printSearchResultsMenu(searchResult);
 
                     break;
 
@@ -203,6 +208,29 @@ class ConsoleApp implements FileUtil, DataUtil {
     }
 
     private static void printMenuMain() {
+
+        System.out.println("1. Online table.");
+        System.out.println("2. Flight information.");
+        System.out.println("3. Flights search and booking.");
+        System.out.println("4. Booking cancelling.");
+        System.out.println("5. My flights.");
+        System.out.println("6. Close session.");
+        System.out.println("7. Resetting/Re-creating flights db from schedule file.");
+        System.out.println("8. Exit.");
+        System.out.println("11. test. Generate flights db.");
+        System.out.println("12. test. Display all flights.");
+        System.out.println("13. test. Load flights from file.");
+        System.out.println("14. test. Save flights to file.");
+
+
+    }
+
+    private static void printSearchResultsMenu(List<Flight> flightList) {
+
+        System.out.println("Found flights matched criteria...");
+
+        flightList.stream()
+                .forEach(ConsoleApp::displayingFlightInformation);
 
         System.out.println("1. Online table.");
         System.out.println("2. Flight information.");
@@ -359,19 +387,10 @@ if (username.equals(Username) && password.equals(Password)) {
 
         System.out.printf(PRINT_FORMAT,
                 flight.getFlightNumber(),
-                Instant.ofEpochMilli(flight.getDepartureDateTime())
-                        .atZone(ZoneId.of(TIME_ZONE))
-                        .toLocalDateTime()
-                        .format(DateTimeFormatter
-                                .ofPattern(DATE_FORMAT)),
-                Instant.ofEpochMilli(flight.getDepartureDateTime())
-                        .atZone(ZoneId.of(TIME_ZONE))
-                        .toLocalDateTime()
-                        .format(DateTimeFormatter
-                                .ofPattern(TIME_FORMAT)),
+                dateLongToString(flight.getDepartureDateTime(), DATE_FORMAT),
+                dateLongToString(flight.getDepartureDateTime(), TIME_FORMAT),
                 flight.getDestination(),
-                LocalTime.ofNanoOfDay(flight.getEstFlightDuration())
-                        .format(DateTimeFormatter.ofPattern(TIME_FORMAT)),
+                timeOfDayLongToString(flight.getEstFlightDuration(), TIME_FORMAT),
                 flight.getMaxNumSeats() - flight.getPassengersOnBoard()
 
         );
@@ -454,6 +473,28 @@ if (username.equals(Username) && password.equals(Password)) {
 
     }
 
+    public static long parseDate(String str) {
+
+        LocalDate date = LocalDate.now(ZoneId.of(TIME_ZONE));
+        ZoneOffset zoneOffset = date.atStartOfDay(ZoneId.of(TIME_ZONE)).getOffset();
+
+        str = str.replaceAll("[^0-9,/]", "");
+
+        try {
+
+            date = LocalDate.parse(str, DateTimeFormatter.ofPattern(DATE_FORMAT));
+
+        } catch (DateTimeParseException e) {
+
+            System.out.println(e.getStackTrace());
+
+        }
+
+//        return date.atStartOfDay(ZoneId.of(TIME_ZONE)).toInstant().toEpochMilli();
+        return date.atStartOfDay().toInstant(zoneOffset).toEpochMilli();
+
+    }
+
     private int parseAndValidateInputInteger(String message, int startRange, int endRange) {
 
         int result = 0;
@@ -510,6 +551,22 @@ if (username.equals(Username) && password.equals(Password)) {
 
     }
 
+    static String dateLongToString(Long dateTime, String format) {
+
+        return Instant.ofEpochMilli(dateTime)
+                .atZone(ZoneId.of(TIME_ZONE))
+                .toLocalDateTime()
+                .format(DateTimeFormatter
+                        .ofPattern(format));
+
+    }
+
+    static String timeOfDayLongToString(Long time, String format) {
+
+        return LocalTime.ofNanoOfDay(time)
+                .format(DateTimeFormatter.ofPattern(format));
+
+    }
 
 }
 
