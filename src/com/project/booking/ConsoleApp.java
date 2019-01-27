@@ -9,16 +9,17 @@ import com.project.booking.Customer.Customer;
 import com.project.booking.Customer.CustomerController;
 import com.project.booking.Flight.Flight;
 import com.project.booking.Flight.FlightController;
-import com.sun.scenario.effect.Offset;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class ConsoleApp implements FileUtil, DataUtil {
 
@@ -130,6 +131,12 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     break;
 
+                case 11:
+
+                    fillUpFlightDatabaseAutomatically(flightsDB);
+
+                    break;
+
                 case 12:
 
                     System.out.println("Displaying entire list of flights...");
@@ -172,8 +179,8 @@ class ConsoleApp implements FileUtil, DataUtil {
         System.out.println("4. Booking cancelling.");
         System.out.println("5. My flights.");
         System.out.println("6. Close session.");
-        System.out.println("7. Reset/Create new flights db from schedule file.");
-        System.out.println("8. Exit.");
+        System.out.println("7. Exit.");
+        System.out.println("11. test. Generate flights db.");
         System.out.println("12. test. Display all flights.");
         System.out.println("13. test. Load flights from file.");
         System.out.println("14. test. Save flights to file.");
