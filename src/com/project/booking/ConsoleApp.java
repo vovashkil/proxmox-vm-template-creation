@@ -14,12 +14,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 class ConsoleApp implements FileUtil, DataUtil {
 
@@ -83,7 +81,12 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     System.out.println("Displaying flight information...");
 
-                    String flightNumber = parseAndValidateFlightNumber("Enter Flight number: ");
+                    String flightNumber = parseAndValidateInputString(
+                            "Enter Flight number: ",
+                            "^[A-Za-z][A-Za-z][0-9]+",
+                            "Flight number",
+                            "PS0779"
+                    );
 
                     if (flightsDB.getAllFlights().stream().map(Flight::getFlightNumber).anyMatch(flightNumber::equalsIgnoreCase))
 
@@ -98,6 +101,17 @@ class ConsoleApp implements FileUtil, DataUtil {
                     break;
 
                 case 3:
+
+                    System.out.println("Flight search and booking...");
+
+                    String destination = parseAndValidateInputString(
+                            "Enter Destination: ",
+                            "^[A-Z][a-z]+",
+                            "Destination",
+                            "Frankfurt"
+                    );
+
+                    System.out.println(destination);
 
                     break;
 
@@ -446,23 +460,9 @@ if (username.equals(Username) && password.equals(Password)) {
         return result;
     }
 
-
-    private void displayingFlightInformation(FlightController flightsDB) {
-
-        int start = 1;
-        int end = flightsDB.getAllFlights().size();
-
-        int index = parseAndValidateInputInteger("Enter flight order number from " +
-                start + " to " + end + " : ", start, end) - 1;
-
-        System.out.println(flightsDB.getFlightById(index));
-
-    }
-
-    private String parseAndValidateFlightNumber(String message) {
+    private String parseAndValidateInputString(String message, String pattern, String name, String example) {
 
         String result = "";
-        String textPattern = "^[A-Za-z][A-Za-z][0-9]+";
         boolean control = true;
 
         System.out.print(message);
@@ -473,8 +473,8 @@ if (username.equals(Username) && password.equals(Password)) {
 
             result = input.nextLine().trim();
 
-            if (result.trim().matches(textPattern)) control = false;
-            else System.out.print("Enter correct Flight number " + textPattern + " (e.g. PS0779): ");
+            if (result.trim().matches(pattern)) control = false;
+            else System.out.print("Enter correct " + name + " \'" + pattern + "\' (e.g. " + example + "): ");
 
         }
         return result;
