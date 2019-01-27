@@ -7,5 +7,5 @@ public interface FileUtil {
     final String SAMPLE_CSV_FILE_PATH = "./files/db/example/kbp_online.csv";
     final String FLIGHTS_FILE_PATH = "./files/db/flights.db";
     final String BOOKINGS_FILE_PATH = "./files/db/bookings.db";
-
+    final String CUSTOMERS_FILE_PATH = "./files/db/customers.db";
 }

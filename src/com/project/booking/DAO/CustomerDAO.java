@@ -11,5 +11,5 @@ public interface CustomerDAO {
     boolean deleteCustomer(Customer customer);
     void saveData(String filePath);
     void readData(String filePath);
-    void loadData(String filePath);
+    void loadData(List<Customer> customers);
 }

@@ -162,5 +162,4 @@ public class Flight implements DataUtil, Serializable {
                 destination;
 
     }
-//test demyanenko olga _ Bilous M
 }

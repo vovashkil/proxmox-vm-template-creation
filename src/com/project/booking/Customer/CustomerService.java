@@ -4,6 +4,8 @@ import com.project.booking.DAO.CollectionCustomerDAO;
 import com.project.booking.DAO.CustomerDAO;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CustomerService {
 
@@ -22,14 +24,13 @@ public class CustomerService {
     }
 
     public void saveCustomer(Customer customer) {
-        if (customer.getLoginName() == "" && customer.getPassword() == "") {
+        if (customer.getLoginName() != "" && customer.getPassword() != "") {
             if (customerDao.getAllCustomers()
                     .stream()
                     .filter(e -> (e.getLoginName() == customer.getLoginName()))
-                    .count() == 0){
+                    .count() == 0) {
                 customerDao.saveCustomer(customer);
-            }
-            else {
+            } else {
                 new IllegalArgumentException();
             }
         }
@@ -63,7 +64,7 @@ public class CustomerService {
         if (loginName != "" && password != "") {
             return customerDao.getAllCustomers()
                     .stream()
-                    .filter(e -> (e.getLoginName() == loginName && e.getPassword() == password))
+                    .filter(e -> !(e.getLoginName() == loginName && e.getPassword() == password))
                     .findAny().get();
         } else {
             return null;

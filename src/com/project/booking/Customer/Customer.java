@@ -1,11 +1,12 @@
 package com.project.booking.Customer;
 
+import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.Sex;
 import com.project.booking.Persons.Person;
 
 import java.io.Serializable;
 
-public class Customer extends Person implements Serializable {
+public class Customer extends Person implements DataUtil, Serializable {
     private int cust_ID;
     private String loginName;
     private String password;

@@ -2,12 +2,13 @@ package com.project.booking.Persons;
 
 import com.project.booking.Constants.Sex;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Person {
+public abstract class Person implements Serializable {
     private String name;
     private String surname;
-    private long birthDate;
+    private Long birthDate;
     private Sex sex;
 
     public String getName() {
@@ -18,7 +19,7 @@ public abstract class Person {
         return surname;
     }
 
-    public long getBirthDate() {
+    public Long getBirthDate() {
         return birthDate;
     }
 
@@ -26,7 +27,7 @@ public abstract class Person {
         return sex;
     }
 
-    public Person(String name, String surname, long birthDate, Sex sex) {
+    public Person(String name, String surname, Long birthDate, Sex sex) {
         this.name = name;
         this.surname = surname;
         this.birthDate = birthDate;
