@@ -1,5 +1,6 @@
 package com.project.booking.DAO;
 
+
 import com.project.booking.Flight.Flight;
 import com.project.booking.Logger.FlightLogger;
 
@@ -7,7 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectionFlightDAO implements FlightDAO {
+public class CollectionFlightDAO implements DAO<Flight> {
 
     private List<Flight> flightsList;
     private FlightLogger logger;
@@ -25,7 +26,7 @@ public class CollectionFlightDAO implements FlightDAO {
     }
 
     @Override
-    public List<Flight> getAllFlights() {
+    public List<Flight> getAll() {
 
         logger.info("Getting all flights list...");
 
@@ -34,7 +35,7 @@ public class CollectionFlightDAO implements FlightDAO {
     }
 
     @Override
-    public Flight getFlightByIndex(int index) {
+    public Flight get(int index) {
 
         logger.info("Getting flight by imdex = " + index + "...");
 
@@ -47,7 +48,7 @@ public class CollectionFlightDAO implements FlightDAO {
     }
 
     @Override
-    public void saveFlight(Flight flight) {
+    public void save(Flight flight) {
 
         logger.info("Saving information to db, flight = " + flight + "...");
 
@@ -67,7 +68,7 @@ public class CollectionFlightDAO implements FlightDAO {
     }
 
     @Override
-    public boolean deleteFlight(int index) {
+    public boolean remove(int index) {
 
         logger.info("Deleting flight by imdex = " + index + "...");
 
@@ -83,7 +84,7 @@ public class CollectionFlightDAO implements FlightDAO {
     }
 
     @Override
-    public boolean deleteFlight(Flight flight) {
+    public boolean remove(Flight flight) {
 
         logger.info("Deleting flight by object = " + flight + "...");
 
@@ -140,15 +141,12 @@ public class CollectionFlightDAO implements FlightDAO {
 
     @Override
     public void loadData(List<Flight> flightsList) {
-
         logger.info("Loading flights info db...");
 
         if (flightsList != null)
 
-            flightsList.forEach(this::saveFlight);
-
+            flightsList.forEach(this::save);
     }
-
 
 }
 
