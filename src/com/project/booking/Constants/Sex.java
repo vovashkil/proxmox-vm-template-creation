@@ -6,6 +6,11 @@ public enum Sex {
     private final String name;
     private final String prefix;
 
+    Sex(String name) {
+        this.name = name;
+        this.prefix = getPrefix();
+    }
+
     Sex(String name, String prefix) {
         this.name = name;
         this.prefix = prefix;

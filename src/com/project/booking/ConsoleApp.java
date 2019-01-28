@@ -9,6 +9,7 @@ import com.project.booking.Customer.Customer;
 import com.project.booking.Customer.CustomerController;
 import com.project.booking.Flight.Flight;
 import com.project.booking.Flight.FlightController;
+import com.project.booking.Passenger.Passenger;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -268,7 +269,9 @@ class ConsoleApp implements FileUtil, DataUtil {
             printSearchResultsMenu(searchResult);
 
             Scanner input = new Scanner(System.in);
-            System.out.print("Please enter flight order number or 0 to return: ");
+            System.out.print("Please enter flight order number [1-" +
+                    searchResult.size() + "] to book or 0 to return: ");
+
             int choice;
 
             try {
@@ -281,52 +284,22 @@ class ConsoleApp implements FileUtil, DataUtil {
 
             }
 
-            switch (choice) {
+            if (choice >= 1 && choice < searchResult.size()) {
 
-                case 1:
+                displayingFlightInformation(searchResult.get(choice - 1));
+                List<Passenger> passengerList = enteringPassengersData(number);
+                System.out.println(passengerList);
+                createBooking(searchResult.get(choice - 1));
 
-                    System.out.println("Case 1...");
-                    displayingFlightInformation(searchResult.get(0));
+            } else if (choice == 0) {
 
-                    break;
+                control = false;
 
-                case 2:
+            } else
 
-                    System.out.println("Case 2...");
-                    displayingFlightInformation(searchResult.get(1));
-
-                    break;
-
-                case 3:
-
-                    System.out.println("Case 3...");
-                    displayingFlightInformation(searchResult.get(2));
-
-                    break;
-
-                case 4:
-
-                    break;
-
-                case 5:
-
-                    break;
-
-                case 6:
-
-                    break;
-
-                case 0:
-
-                    control = false;
-
-                    break;
-
-                default:
-
-                    System.out.println("Your choice is wrong. Please enter the flight order number or 0 to return.");
-
-            }
+                System.out.println(
+                        "Your choice is wrong. Please enter the flight order number [1-" +
+                                searchResult.size() + "] to book or 0 to return.");
 
         }
 
@@ -481,61 +454,59 @@ if (username.equals(Username) && password.equals(Password)) {
 
     }
 
-    private static void flightDbFromScheduleFile(FlightController flightsDB) {
+    private static List<Passenger> enteringPassengersData(int number) {
 
-        System.out.println("Resetting/Generating new database of flights...");
+        List<Passenger> passengersList = Arrays.asList();
 
-        LocalTime currentTime = LocalTime.now(ZoneId.of(TIME_ZONE));
-        LocalDate currentDate = LocalDate.now(ZoneId.of(TIME_ZONE));
+        for (int i = 0; i < number; i++) {
 
-        try (
-
-                Reader reader = Files.newBufferedReader(Paths.get(KBP_SCHEDULE_FILE_PATH));
-                CSVReader csvReader = new CSVReader(reader, ',', '\'', 1);
-
-        ) {
-
-            String[] nextRecord;
-
-            while ((nextRecord = csvReader.readNext()) != null) {
-
-                long flightDepartureTimeLong = parseTime(nextRecord[1]);
-                long flightDurationTimeLong = parseTime(nextRecord[7]);
-                LocalDate flightDepartureDate = currentDate;
-
-                if (flightDepartureTimeLong <= currentTime.toNanoOfDay())
-                    flightDepartureDate = currentDate.plusDays(1);
-
-                long departureDateTimeLong = dateTimeToLong(
-                        LocalDateTime.of(
-                                flightDepartureDate,
-                                LocalTime.ofNanoOfDay(flightDepartureTimeLong)
-                        )
-                );
-
-                flightsDB.saveFlight(
-
-                        new Flight(nextRecord[0],
-                                departureDateTimeLong,
-                                flightDurationTimeLong,
-                                "Kiev Boryspil",
-                                nextRecord[2],
-                                150
-
-                        ));
-
-            }
-        } catch (IOException e) {
-
-            System.out.println(e.getStackTrace());
-            System.out.println(e.getMessage());
+//            passengersList.add(
+//                    new Passenger(
+//                            parseAndValidateInputString(
+//                                    "Enter Name: ",
+//                                    "^[A-Z][A-Za-z ]+",
+//                                    "Name",
+//                                    "Vasia"
+//                            ),
+//                            parseAndValidateInputString(
+//                                    "Enter Surname: ",
+//                                    "^[A-Z][A-Za-z ]+",
+//                                    "Surname",
+//                                    "Sidorov"
+//                            ),
+//                            parseDate(
+//                                    parseAndValidateInputString(
+//                                            "Enter Date: ",
+//                                            "^[0-9][0-9]/[0-9][0-9]/[12][09][0-9][0-9]",
+//                                            "Date",
+//                                            "21/07/1990"
+//                                    )
+//                            ),
+//                            Sex.MALE
+////                            Sex.valueOf(parseAndValidateInputString(
+////                                    "Enter Sex: ",
+////                                    "Male|Female",
+////                                    "Sex",
+////                                    "Female"
+////                                    ).toUpperCase()
+////                            ).getName()
+//
+//                    ));
 
         }
+
+        return passengersList;
+
+    }
+
+
+    private static void createBooking(Flight flight) {
+        if (flight == null) return;
 
 
     }
 
-    public static long parseTime(String str) {
+    private static long parseTime(String str) {
 
         LocalTime time = LocalTime.now(ZoneId.of(TIME_ZONE));
 
@@ -555,7 +526,7 @@ if (username.equals(Username) && password.equals(Password)) {
 
     }
 
-    public static long parseDate(String str) {
+    private static long parseDate(String str) {
 
         LocalDate date = LocalDate.now(ZoneId.of(TIME_ZONE));
         ZoneOffset zoneOffset = date.atStartOfDay(ZoneId.of(TIME_ZONE)).getOffset();
@@ -647,6 +618,60 @@ if (username.equals(Username) && password.equals(Password)) {
 
         return LocalTime.ofNanoOfDay(time)
                 .format(DateTimeFormatter.ofPattern(TIME_FORMAT));
+
+    }
+
+    private static void flightDbFromScheduleFile(FlightController flightsDB) {
+
+        System.out.println("Resetting/Generating new database of flights...");
+
+        LocalTime currentTime = LocalTime.now(ZoneId.of(TIME_ZONE));
+        LocalDate currentDate = LocalDate.now(ZoneId.of(TIME_ZONE));
+
+        try (
+
+                Reader reader = Files.newBufferedReader(Paths.get(KBP_SCHEDULE_FILE_PATH));
+                CSVReader csvReader = new CSVReader(reader, ',', '\'', 1);
+
+        ) {
+
+            String[] nextRecord;
+
+            while ((nextRecord = csvReader.readNext()) != null) {
+
+                long flightDepartureTimeLong = parseTime(nextRecord[1]);
+                long flightDurationTimeLong = parseTime(nextRecord[7]);
+                LocalDate flightDepartureDate = currentDate;
+
+                if (flightDepartureTimeLong <= currentTime.toNanoOfDay())
+                    flightDepartureDate = currentDate.plusDays(1);
+
+                long departureDateTimeLong = dateTimeToLong(
+                        LocalDateTime.of(
+                                flightDepartureDate,
+                                LocalTime.ofNanoOfDay(flightDepartureTimeLong)
+                        )
+                );
+
+                flightsDB.saveFlight(
+
+                        new Flight(nextRecord[0],
+                                departureDateTimeLong,
+                                flightDurationTimeLong,
+                                "Kiev Boryspil",
+                                nextRecord[2],
+                                150
+
+                        ));
+
+            }
+        } catch (IOException e) {
+
+            System.out.println(e.getStackTrace());
+            System.out.println(e.getMessage());
+
+        }
+
 
     }
 
