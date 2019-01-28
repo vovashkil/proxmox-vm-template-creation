@@ -106,40 +106,7 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     System.out.println("Flight search and booking...");
 
-                    String destination = parseAndValidateInputString(
-                            "Enter Destination: ",
-                            "^[A-Z][A-Za-z ]+",
-                            "Destination",
-                            "Frankfurt"
-                    );
-
-                    String date = parseAndValidateInputString(
-                            "Enter Date: ",
-                            "^[0-9][0-9]/[0-9][0-9]/[2][0][1-2][0-9]",
-                            "Date",
-                            "25/11/2019"
-                    );
-
-                    int number = parseAndValidateInputInteger(
-                            "Enter number of passengers: ",
-                            1,
-                            flightsDB.getAllFlights()
-                                    .stream()
-                                    .mapToInt(Flight::getMaxNumSeats)
-                                    .max().orElse(-1)
-                    );
-
-                    List<Flight> searchResult = flightsDB.getAllFlights()
-                            .stream()
-                            .filter(
-                                    item -> item.getDestination().equalsIgnoreCase(destination) &&
-                                            item.getDepartureDateTime() > parseDate(date) &&
-                                            (item.getMaxNumSeats() - item.getPassengersOnBoard()) >= number
-                            )
-                            .sorted(Comparator.comparingLong(Flight::getDepartureDateTime))
-                            .collect(Collectors.toList());
-
-                    printSearchResultsMenu(searchResult);
+                    searchAndBooking(flightsDB);
 
                     break;
 
@@ -229,24 +196,142 @@ class ConsoleApp implements FileUtil, DataUtil {
 
         System.out.println("Found flights matched criteria...");
 
-        flightList.stream()
-                .forEach(ConsoleApp::displayingFlightInformation);
+        final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s | %15s |\n";
+        final String DASHES = new String(new char[94]).replace("\0", "-");
 
-        System.out.println("1. Online table.");
-        System.out.println("2. Flight information.");
-        System.out.println("3. Flights search and booking.");
-        System.out.println("4. Booking cancelling.");
-        System.out.println("5. My flights.");
-        System.out.println("6. Close session.");
-        System.out.println("7. Resetting/Re-creating flights db from schedule file.");
-        System.out.println("8. Exit.");
-        System.out.println("11. test. Generate flights db.");
-        System.out.println("12. test. Display all flights.");
-        System.out.println("13. test. Load flights from file.");
-        System.out.println("14. test. Save flights to file.");
+        System.out.printf("   %s\n   ", DASHES);
+        System.out.printf(
+                PRINT_FORMAT,
+                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats"
+        );
+        System.out.printf("   %s\n", DASHES);
 
+
+        flightList
+                .forEach(flight -> {
+
+                    System.out.print(flightList.indexOf(flight) + +1 + ". ");
+                    ConsoleApp.printFlight(flight, PRINT_FORMAT);
+
+                });
+
+        System.out.println("0.   Return to the main menu.");
 
     }
+
+    private static void searchAndBooking(FlightController flightsDB) {
+
+        String destination = parseAndValidateInputString(
+                "Enter Destination: ",
+                "^[A-Z][A-Za-z ]+",
+                "Destination",
+                "Frankfurt"
+        );
+
+        String date = parseAndValidateInputString(
+                "Enter Date: ",
+                "^[0-9][0-9]/[0-9][0-9]/[2][0][1-2][0-9]",
+                "Date",
+                "25/11/2019"
+        );
+
+        int number = parseAndValidateInputInteger(
+                "Enter number of passengers: ",
+                1,
+                flightsDB.getAllFlights()
+                        .stream()
+                        .mapToInt(Flight::getMaxNumSeats)
+                        .max().orElse(-1)
+        );
+
+        List<Flight> searchResult = flightsDB.getAllFlights()
+                .stream()
+                .filter(
+                        item -> item.getDestination().equalsIgnoreCase(destination) &&
+                                item.getDepartureDateTime() > parseDate(date) &&
+                                (item.getMaxNumSeats() - item.getPassengersOnBoard()) >= number
+                )
+                .sorted(Comparator.comparingLong(Flight::getDepartureDateTime))
+                .collect(Collectors.toList());
+
+        if (searchResult.isEmpty()) {
+
+            System.out.println("Sorry, no flight matching the criteria found. Repeat yor search.");
+            return;
+
+        }
+
+        boolean control = true;
+
+        while (control) {
+
+            printSearchResultsMenu(searchResult);
+
+            Scanner input = new Scanner(System.in);
+            System.out.print("Please enter flight order number or 0 to return: ");
+            int choice;
+
+            try {
+
+                choice = input.nextInt();
+
+            } catch (InputMismatchException e) {
+
+                choice = -1;
+
+            }
+
+            switch (choice) {
+
+                case 1:
+
+                    System.out.println("Case 1...");
+                    displayingFlightInformation(searchResult.get(0));
+
+                    break;
+
+                case 2:
+
+                    System.out.println("Case 2...");
+                    displayingFlightInformation(searchResult.get(1));
+
+                    break;
+
+                case 3:
+
+                    System.out.println("Case 3...");
+                    displayingFlightInformation(searchResult.get(2));
+
+                    break;
+
+                case 4:
+
+                    break;
+
+                case 5:
+
+                    break;
+
+                case 6:
+
+                    break;
+
+                case 0:
+
+                    control = false;
+
+                    break;
+
+                default:
+
+                    System.out.println("Your choice is wrong. Please enter the flight order number or 0 to return.");
+
+            }
+
+        }
+
+    }
+
 
     public Customer loginCustomer() {
         Customer result = null;
@@ -348,24 +433,15 @@ if (username.equals(Username) && password.equals(Password)) {
 
         flightsDB.getAllFlights()
                 .stream()
-                .sorted((a, b) -> (int) (a.getDepartureDateTime() - b.getDepartureDateTime()))
+                .sorted(Comparator.comparingLong(Flight::getDepartureDateTime))
                 .forEach(flight -> System.out.printf(PRINT_FORMAT,
                         flight.getFlightNumber(),
-                        Instant.ofEpochMilli(flight.getDepartureDateTime())
-                                .atZone(ZoneId.of(TIME_ZONE))
-                                .toLocalDateTime()
-                                .format(DateTimeFormatter
-                                        .ofPattern(DATE_FORMAT)),
-                        Instant.ofEpochMilli(flight.getDepartureDateTime())
-                                .atZone(ZoneId.of(TIME_ZONE))
-                                .toLocalDateTime()
-                                .format(DateTimeFormatter
-                                        .ofPattern(TIME_FORMAT)),
+                        dateLongToString(flight.getDepartureDateTime(), DATE_FORMAT),
+                        dateLongToString(flight.getDepartureDateTime(), TIME_FORMAT),
                         flight.getDestination(),
-                        LocalTime.ofNanoOfDay(flight.getEstFlightDuration())
-                                .format(DateTimeFormatter.ofPattern(TIME_FORMAT))
+                        timeOfDayLongToString(flight.getEstFlightDuration()))
 
-                ));
+                );
 
         System.out.printf("%s\n", DASHES);
 
@@ -385,17 +461,23 @@ if (username.equals(Username) && password.equals(Password)) {
 
         System.out.printf("%s\n", DASHES);
 
-        System.out.printf(PRINT_FORMAT,
+        printFlight(flight, PRINT_FORMAT);
+
+        System.out.printf("%s\n", DASHES);
+
+    }
+
+    private static void printFlight(Flight flight, String format) {
+
+        System.out.printf(format,
                 flight.getFlightNumber(),
                 dateLongToString(flight.getDepartureDateTime(), DATE_FORMAT),
                 dateLongToString(flight.getDepartureDateTime(), TIME_FORMAT),
                 flight.getDestination(),
-                timeOfDayLongToString(flight.getEstFlightDuration(), TIME_FORMAT),
+                timeOfDayLongToString(flight.getEstFlightDuration()),
                 flight.getMaxNumSeats() - flight.getPassengersOnBoard()
 
         );
-
-        System.out.printf("%s\n", DASHES);
 
     }
 
@@ -495,7 +577,7 @@ if (username.equals(Username) && password.equals(Password)) {
 
     }
 
-    private int parseAndValidateInputInteger(String message, int startRange, int endRange) {
+    private static int parseAndValidateInputInteger(String message, int startRange, int endRange) {
 
         int result = 0;
         boolean control = true;
@@ -524,7 +606,7 @@ if (username.equals(Username) && password.equals(Password)) {
         return result;
     }
 
-    private String parseAndValidateInputString(String message, String pattern, String name, String example) {
+    private static String parseAndValidateInputString(String message, String pattern, String name, String example) {
 
         String result = "";
         boolean control = true;
@@ -544,14 +626,14 @@ if (username.equals(Username) && password.equals(Password)) {
         return result;
     }
 
-    static long dateTimeToLong(LocalDateTime dateTime) {
+    private static long dateTimeToLong(LocalDateTime dateTime) {
 
         ZoneOffset zoneOffset = dateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
         return dateTime.toInstant(zoneOffset).toEpochMilli();
 
     }
 
-    static String dateLongToString(Long dateTime, String format) {
+    private static String dateLongToString(Long dateTime, String format) {
 
         return Instant.ofEpochMilli(dateTime)
                 .atZone(ZoneId.of(TIME_ZONE))
@@ -561,10 +643,10 @@ if (username.equals(Username) && password.equals(Password)) {
 
     }
 
-    static String timeOfDayLongToString(Long time, String format) {
+    private static String timeOfDayLongToString(Long time) {
 
         return LocalTime.ofNanoOfDay(time)
-                .format(DateTimeFormatter.ofPattern(format));
+                .format(DateTimeFormatter.ofPattern(TIME_FORMAT));
 
     }
 
