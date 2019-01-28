@@ -12,7 +12,7 @@ public class Main {
 
         //if ((loginCustomer = app.loginCustomer()) != null) {
             app.startApp();
-       // }
+        //}
     }
 }
 

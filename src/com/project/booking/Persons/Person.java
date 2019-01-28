@@ -52,7 +52,7 @@ public abstract class Person implements Serializable {
 
     @Override
     public String toString() {
-        return "Persons{" +
+        return "PersonType{" +
                 "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", birthDate=" + birthDate +
