@@ -1,18 +1,29 @@
 package com.project.booking;
 
+import com.project.booking.Logger.AppLogger;
 import com.project.booking.Persons.Customer;
 
-public class Main {
+import java.io.IOException;
 
-    private static Customer loginCustomer;
+public class Main {
 
     public static void main(String[] args) {
 
         ConsoleApp app = new ConsoleApp();
 
-        //if ((loginCustomer = app.loginCustomer()) != null) {
-            app.startApp();
-        //}
+        try {
+            AppLogger.setup();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Problems with creating the log files");
+        }
+
+        for (; ; ) {
+            if (app.loginCustomer()) {
+                break;
+            }
+        }
+        app.startApp();
     }
 }
 
