@@ -1,8 +1,7 @@
-package com.project.booking.Customer;
+package com.project.booking.Persons;
 
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.Sex;
-import com.project.booking.Persons.Person;
 
 import java.io.Serializable;
 

@@ -1,7 +1,8 @@
 package com.project.booking.Flight;
 
 import com.project.booking.Constants.DataUtil;
-import com.project.booking.Passenger.Passenger;
+import com.project.booking.Persons.Passenger;
+import com.project.booking.Persons.Person;
 
 import java.io.Serializable;
 import java.time.*;
@@ -18,7 +19,7 @@ public class Flight implements DataUtil, Serializable {
     private String origin;
     private String destination;
     private int maxNumSeats;
-    private List<Passenger> passengers;
+    private List<Person> passengers;
 
     public Flight(String flightNumber, long departureDateTime, long estFlightDuration, String origin, String destination, int maxNumSeats) {
 
@@ -80,7 +81,7 @@ public class Flight implements DataUtil, Serializable {
         return maxNumSeats;
     }
 
-    public boolean addPassenger(Passenger passenger) {
+    public boolean addPassenger(Person passenger) {
 
         if (!passengers.contains(passenger) &&
                 passengers.size() < maxNumSeats &&
@@ -95,7 +96,7 @@ public class Flight implements DataUtil, Serializable {
 
     }
 
-    public boolean deletePassenger(Passenger passenger) {
+    public boolean deletePassenger(Person passenger) {
 
         if (!passengers.contains(passenger)) return false;
 

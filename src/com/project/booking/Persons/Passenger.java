@@ -1,10 +1,8 @@
-package com.project.booking.Passenger;
+package com.project.booking.Persons;
 
 import com.project.booking.Constants.Sex;
-import com.project.booking.Persons.Person;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class Passenger extends Person implements Serializable {
     private int pass_ID;

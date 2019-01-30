@@ -1,8 +1,9 @@
-package com.project.booking.Customer;
+package com.project.booking.Persons;
 
 import java.util.List;
 
 public class CustomerController {
+
     private CustomerService customerService = new CustomerService();
 
     public List<Customer> getAllCustomers() {

@@ -1,11 +1,9 @@
-package com.project.booking.Customer;
+package com.project.booking.Persons;
 
 import com.project.booking.DAO.CollectionCustomerDAO;
 import com.project.booking.DAO.CustomerDAO;
 
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class CustomerService {
 

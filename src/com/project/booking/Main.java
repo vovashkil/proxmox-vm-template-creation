@@ -1,6 +1,6 @@
 package com.project.booking;
 
-import com.project.booking.Customer.Customer;
+import com.project.booking.Persons.Customer;
 
 public class Main {
 
