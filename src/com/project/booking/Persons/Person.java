@@ -1,9 +1,14 @@
 package com.project.booking.Persons;
 
-import com.project.booking.Constants.Sex;
+import com.project.booking.Constants.*;
+//import com.project.booking.Constants.DataUtil;
+//import com.project.booking.Constants.Sex;
 
 import java.io.Serializable;
 import java.util.Objects;
+
+import static com.project.booking.Constants.ComUtil.dateLongToString;
+
 
 public abstract class Person implements Serializable {
     private String name;
@@ -52,10 +57,10 @@ public abstract class Person implements Serializable {
 
     @Override
     public String toString() {
-        return "PersonType{" +
+        return "Person{" +
                 "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", birthDate=" + birthDate +
+                ", birthDate=" + dateLongToString(birthDate, DataUtil.DATE_FORMAT) +
                 ", sex=" + sex +
                 '}';
     }
