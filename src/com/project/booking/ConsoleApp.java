@@ -328,6 +328,61 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     }
 
+    private static void cancelBooking(BookingController bookingsDB) {
+
+        boolean control = true;
+
+        while (control) {
+
+            printCancelBookingMenu(bookingsDB);
+
+            Scanner input = new Scanner(System.in);
+            System.out.print("Please enter booking ID to cancel or 0 to return: ");
+
+            long choice;
+
+            try {
+
+                choice = input.nextLong();
+
+            } catch (InputMismatchException e) {
+
+                choice = -1;
+
+            }
+
+            if (bookingsDB.getAllBookings().stream().mapToLong(Booking::getBookingNumber).findAny().isPresent()) {
+
+                final long choiceFinal = choice;
+                System.out.println("deleteing booking");
+
+                Booking object = bookingsDB.getAllBookings()
+                        .stream().filter(x->x.getBookingNumber() == choiceFinal)
+                        .findFirst().orElseGet(null);
+                if (object != null) bookingsDB.getAllBookings().remove(object);
+
+                control = false;
+
+            } else if (choice == 0) {
+
+                control = false;
+
+            } else
+
+                System.out.println(
+                        "Your choice is wrong. Please enter booking ID to cancel or 0 to return: ");
+
+        }
+
+    }
+
+    private static void printCancelBookingMenu(BookingController bookingsDB) {
+
+        bookingsDB.getAllBookings().stream().forEach(System.out::println);
+        System.out.println("0.   Return to the main menu.");
+
+    }
+  
     public void closeSession() {
         customerApp = null;
         loginCustomer();
@@ -390,7 +445,6 @@ class ConsoleApp implements FileUtil, DataUtil {
     }
 
     public boolean loginCustomer() {
-
         LOGGER.setLevel(Level.INFO);
         LOGGER.info("Try login for booking ticket");
 
