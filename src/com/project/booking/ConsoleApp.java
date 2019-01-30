@@ -56,7 +56,7 @@ class ConsoleApp implements FileUtil, DataUtil {
         BookingController bookingsDB = new BookingController();
 
         flightsDB.readData(FLIGHTS_FILE_PATH);
-//        bookingsDB.readData(BOOKINGS_FILE_PATH);
+        bookingsDB.readData(BOOKINGS_FILE_PATH);
 
         boolean control = true;
 
@@ -333,7 +333,7 @@ class ConsoleApp implements FileUtil, DataUtil {
         loginCustomer();
     }
 
-    public boolean loginCustomer() {
+
     private static void cancelBooking(BookingController bookingsDB) {
 
         boolean control = true;
@@ -389,7 +389,7 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     }
 
-
+    public boolean loginCustomer() {
 
         LOGGER.setLevel(Level.INFO);
         LOGGER.info("Try login for booking ticket");
