@@ -4,6 +4,8 @@ import com.project.booking.DAO.CollectionCustomerDAO;
 import com.project.booking.DAO.CustomerDAO;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CustomerService {
 
@@ -59,13 +61,9 @@ public class CustomerService {
     }
 
     public Customer getCustomerByLogin(String loginName, String password) {
-        if (loginName != "" && password != "") {
-            return customerDao.getAllCustomers()
-                    .stream()
-                    .filter(e -> !(e.getLoginName() == loginName && e.getPassword() == password))
-                    .findAny().get();
-        } else {
-            return null;
-        }
+        return customerDao.getAllCustomers()
+                .stream()
+                .filter(customer -> (customer.getLoginName().equalsIgnoreCase(loginName) && customer.getPassword().equals(password)))
+                .findAny().orElse(null);
     }
 }
