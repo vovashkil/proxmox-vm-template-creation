@@ -1,8 +1,11 @@
 package com.project.booking.Persons;
 
+import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.Sex;
 
 import java.io.Serializable;
+
+import static com.project.booking.Constants.ComUtil.dateLongToString;
 
 public class Passenger extends Person implements Serializable {
     private int pass_ID;
@@ -31,7 +34,11 @@ public class Passenger extends Person implements Serializable {
     public String toString() {
         return "Passenger{" +
                 "pass_ID=" + pass_ID +
+                ", name='" + super.getName() + '\'' +
+                ", surname='" + super.getSurname() + '\'' +
+                ", birthDate=" + dateLongToString(super.getBirthDate(), DataUtil.DATE_FORMAT) +
+                ", sex=" + super.getSex() +
                 ", passportNumber='" + passportNumber + '\'' +
-                "} " + super.toString();
+                "}";
     }
 }

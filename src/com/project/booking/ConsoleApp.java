@@ -1,6 +1,7 @@
 package com.project.booking;
 
 import com.opencsv.CSVReader;
+import com.project.booking.Booking.Booking;
 import com.project.booking.Booking.BookingController;
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
@@ -21,11 +22,16 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 class ConsoleApp implements FileUtil, DataUtil {
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private final CustomerController customersDB;
+    private static Customer customerApp;
+
     LocalDateTime currDateTime = LocalDateTime.now(ZoneId.of(TIME_ZONE));
     private ZoneOffset offset = currDateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
     private long currentDateTime = currDateTime.toInstant(offset).toEpochMilli();
@@ -122,7 +128,11 @@ class ConsoleApp implements FileUtil, DataUtil {
                     break;
 
                 case 6:
-
+                    for (; ; ) {
+                        if (loginCustomer()) {
+                            break;
+                        }
+                    }
                     break;
 
                 case 7:
@@ -307,13 +317,21 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     }
 
+    public void closeSession() {
+        customerApp = null;
+        loginCustomer();
+    }
 
-    public Customer loginCustomer() {
-        Customer result = null;
+    public boolean loginCustomer() {
+
+        LOGGER.setLevel(Level.INFO);
+        LOGGER.info("Try login for booking ticket");
+
+        boolean result = false;
+        customerApp = null;
         String loginName;
         String password;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
         Scanner scanner = new Scanner(System.in);
         for (; ; ) {
@@ -326,49 +344,28 @@ class ConsoleApp implements FileUtil, DataUtil {
                     loginName = scanner.nextLine();
                     System.out.print("Password: ");
                     password = scanner.nextLine();
-                    result = customersDB.getCustomerByLogin(loginName, password);
-                    if (result != null) {
-                        System.out.printf("%s %s, Welcome to booking!!!\n", result.getSurname(), result.getName());
-
+                    customerApp = customersDB.getCustomerByLogin(loginName, password);
+                    if (customerApp != null) {
+                        System.out.printf("%s %s, Welcome to booking!!!\n", customerApp.getSurname(), customerApp.getName());
+                        result = true;
+                    } else {
+                        System.out.println("Invalid Username & Password!");
                     }
-/*
-  JOptionPane.showMessageDialog(null,"Invalid User Name or Password","Error",JOptionPane.ERROR_MESSAGE);
-
-if (username.equals(Username) && password.equals(Password)) {
-
-        System.out.println("Access Granted! Welcome!");
-    }
-
-    else if (username.equals(Username)) {
-        System.out.println("Invalid Password!");
-    } else if (password.equals(Password)) {
-        System.out.println("Invalid Username!");
-    } else {
-        System.out.println("Invalid Username & Password!");
-    }
-
-    if (x == rec.getString("users_name")) {
-                if (y == rec.getString("users_password")) {
-                    System.out.println("Logged in!");
-                } else {
-                    System.out.println("Password did not match username!");
-                }
-            } else {
-                    [color=red]System.out.println("Username did not match the database");[/color]
-            }
-* */
                     return result;
                 case "REGISTER":
-                    result = (Customer) createPerson(PersonType.CUSTOMER);
-                    customersDB.saveCustomer(result);
-                    //System.out.println(result.toString());
+                    customerApp = (Customer) createPerson(PersonType.CUSTOMER);
+                    customersDB.saveCustomer(customerApp);
+                    if (customerApp != null) {
+                        System.out.printf("%s %s, Welcome to booking!!!\n", customerApp.getSurname(), customerApp.getName());
+                        result = true;
+                    } else {
+                        System.out.println("Customer is not registered!");
+                    }
                     return result;
                 case "EXIT":
-                    // exit the loop
                     System.exit(0);
                     break;
                 default:
-                    // invalid input, tell them to try again
                     System.out.printf("Invalid option (%s), choose login or register!%n", input);
             }
         }
@@ -495,7 +492,6 @@ if (username.equals(Username) && password.equals(Password)) {
     }
 
     private static void printFlight(Flight flight, String format) {
-
         System.out.printf(format,
                 flight.getFlightNumber(),
                 dateLongToString(flight.getDepartureDateTime(), DATE_FORMAT),
@@ -503,9 +499,7 @@ if (username.equals(Username) && password.equals(Password)) {
                 flight.getDestination(),
                 timeOfDayLongToString(flight.getEstFlightDuration()),
                 flight.getMaxNumSeats() - flight.getPassengersOnBoard()
-
         );
-
     }
 
     private static List<Passenger> enteringPassengersData(int number) {
@@ -515,7 +509,7 @@ if (username.equals(Username) && password.equals(Password)) {
 
         for (int i = 0; i < number; i++) {
             System.out.println("Enter passenger #" + (+i + +1) + "'s (of " + number + ") personal data, please... ");
-            passenger = (Passenger)createPerson(PersonType.PASSENGER);
+            passenger = (Passenger) createPerson(PersonType.PASSENGER);
             passengersList.add(passenger);
             System.out.println(passengersList);
         }

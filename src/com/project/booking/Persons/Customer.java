@@ -5,6 +5,8 @@ import com.project.booking.Constants.Sex;
 
 import java.io.Serializable;
 
+import static com.project.booking.Constants.ComUtil.dateLongToString;
+
 public class Customer extends Person implements DataUtil, Serializable {
     private int cust_ID;
     private String loginName;
@@ -48,7 +50,11 @@ public class Customer extends Person implements DataUtil, Serializable {
         return "Customer{" +
                 "loginName='" + loginName + '\'' +
                 ", password='" + password + '\'' +
+                ", name='" + super.getName() + '\'' +
+                ", surname='" + super.getSurname() + '\'' +
+                ", birthDate=" + dateLongToString(super.getBirthDate(), DataUtil.DATE_FORMAT) +
+                ", sex=" + super.getSex() +
                 ", isVIP=" + isVIP +
-                "} " + super.toString();
+                "}";
     }
 }
