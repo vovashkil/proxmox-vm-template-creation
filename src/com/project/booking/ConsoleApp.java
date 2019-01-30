@@ -289,7 +289,7 @@ class ConsoleApp implements FileUtil, DataUtil {
             if (choice >= 1 && choice < searchResult.size()) {
 
                 displayingFlightInformation(searchResult.get(choice - 1));
-                List<Person> passengerList = enteringPassengersData(number);
+                List<Passenger> passengerList = enteringPassengersData(number);
                 System.out.println(passengerList);
                 createBooking(searchResult.get(choice - 1));
 
@@ -508,21 +508,18 @@ if (username.equals(Username) && password.equals(Password)) {
 
     }
 
-    private static List<Person> enteringPassengersData(int number) {
+    private static List<Passenger> enteringPassengersData(int number) {
 
-        List<Person> passengersList = Arrays.asList();
+        ArrayList<Passenger> passengersList = new ArrayList<>();
+        Passenger passenger;
 
         for (int i = 0; i < number; i++) {
-
             System.out.println("Enter passenger #" + (+i + +1) + "'s (of " + number + ") personal data, please... ");
-
-            System.out.println(createPerson(PersonType.PASSENGER));
-//            passengersList.add(createPerson(PersonType.PASSENGER));
-
+            passenger = (Passenger)createPerson(PersonType.PASSENGER);
+            passengersList.add(passenger);
+            System.out.println(passengersList);
         }
-
         return passengersList;
-
     }
 
     private static void createBooking(Flight flight) {
