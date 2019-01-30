@@ -1,6 +1,7 @@
 package com.project.booking;
 
 import com.opencsv.CSVReader;
+import com.project.booking.Booking.Booking;
 import com.project.booking.Booking.BookingController;
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
@@ -109,11 +110,15 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                     System.out.println("Flight search and booking...");
 
-                    searchAndBooking(flightsDB);
+                    searchAndBooking(flightsDB, bookingsDB);
 
                     break;
 
                 case 4:
+
+                    System.out.println("Booking cancelling...");
+
+                    cancelBooking(bookingsDB);
 
                     break;
 
@@ -222,7 +227,7 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     }
 
-    private static void searchAndBooking(FlightController flightsDB) {
+    private static void searchAndBooking(FlightController flightsDB, BookingController bookingsDB) {
 
         String destination = parseAndValidateInputString(
                 "Enter Destination: ",
@@ -289,9 +294,16 @@ class ConsoleApp implements FileUtil, DataUtil {
             if (choice >= 1 && choice < searchResult.size()) {
 
                 displayingFlightInformation(searchResult.get(choice - 1));
-                List<Passenger> passengerList = enteringPassengersData(number);
-                System.out.println(passengerList);
-                createBooking(searchResult.get(choice - 1));
+//                List<Passenger> passengerList = enteringPassengersData(number);
+//                System.out.println(passengerList);
+                Booking  booking = createBooking(searchResult.get(choice - 1), number);
+
+                System.out.println(booking);
+                System.out.println("Your booking is :" + booking);
+
+                bookingsDB.saveBooking(booking);
+
+                control = false;
 
             } else if (choice == 0) {
 
@@ -306,6 +318,62 @@ class ConsoleApp implements FileUtil, DataUtil {
         }
 
     }
+
+    private static void cancelBooking(BookingController bookingsDB) {
+
+        boolean control = true;
+
+        while (control) {
+
+            printCancelBookingMenu(bookingsDB);
+
+            Scanner input = new Scanner(System.in);
+            System.out.print("Please enter booking ID to cancel or 0 to return: ");
+
+            long choice;
+
+            try {
+
+                choice = input.nextLong();
+
+            } catch (InputMismatchException e) {
+
+                choice = -1;
+
+            }
+
+            if (bookingsDB.getAllBookings().stream().mapToLong(Booking::getBookingNumber).findAny().isPresent()) {
+
+                final long choiceFinal = choice;
+                System.out.println("deleteing booking");
+
+                Booking object = bookingsDB.getAllBookings()
+                        .stream().filter(x->x.getBookingNumber() == choiceFinal)
+                        .findFirst().orElseGet(null);
+                if (object != null) bookingsDB.getAllBookings().remove(object);
+
+                control = false;
+
+            } else if (choice == 0) {
+
+                control = false;
+
+            } else
+
+                System.out.println(
+                        "Your choice is wrong. Please enter booking ID to cancel or 0 to return: ");
+
+        }
+
+    }
+
+    private static void printCancelBookingMenu(BookingController bookingsDB) {
+
+        bookingsDB.getAllBookings().stream().forEach(System.out::println);
+        System.out.println("0.   Return to the main menu.");
+
+    }
+
 
 
     public Customer loginCustomer() {
@@ -515,16 +583,32 @@ if (username.equals(Username) && password.equals(Password)) {
 
         for (int i = 0; i < number; i++) {
             System.out.println("Enter passenger #" + (+i + +1) + "'s (of " + number + ") personal data, please... ");
-            passenger = (Passenger)createPerson(PersonType.PASSENGER);
+            passenger = (Passenger) createPerson(PersonType.PASSENGER);
             passengersList.add(passenger);
             System.out.println(passengersList);
         }
         return passengersList;
     }
 
-    private static void createBooking(Flight flight) {
-        if (flight == null) return;
+    private static Booking createBooking(Flight flight, int passagersNumber) {
 
+        Booking result = null;
+
+        if (flight != null && passagersNumber > 0) {
+
+            result = new Booking(flight);
+
+            for (int i = 0; i < passagersNumber; i++) {
+                System.out.println("Enter passenger #" + (+i + +1) + "'s (of " + passagersNumber + ") personal data, please... ");
+
+                result.addPassenger(createPerson(PersonType.PASSENGER));
+
+            }
+        }
+
+        // add passengers from booking to flight
+
+        return result;
 
     }
 
