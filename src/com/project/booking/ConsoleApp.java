@@ -6,13 +6,12 @@ import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
 import com.project.booking.Constants.PersonType;
 import com.project.booking.Constants.Sex;
-import com.project.booking.Customer.Customer;
-import com.project.booking.Customer.CustomerController;
+import com.project.booking.Persons.Customer;
+import com.project.booking.Persons.CustomerController;
 import com.project.booking.Flight.Flight;
 import com.project.booking.Flight.FlightController;
-import com.project.booking.Passenger.Passenger;
+import com.project.booking.Persons.Passenger;
 import com.project.booking.Persons.Person;
-import com.sun.jdi.ClassType;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -290,7 +289,7 @@ class ConsoleApp implements FileUtil, DataUtil {
             if (choice >= 1 && choice < searchResult.size()) {
 
                 displayingFlightInformation(searchResult.get(choice - 1));
-                List<Passenger> passengerList = enteringPassengersData(number);
+                List<Person> passengerList = enteringPassengersData(number);
                 System.out.println(passengerList);
                 createBooking(searchResult.get(choice - 1));
 
@@ -375,10 +374,10 @@ if (username.equals(Username) && password.equals(Password)) {
         }
     }
 
-    private Person createPerson(PersonType personType) {
+    private static Person createPerson(PersonType personType) {
         Person result;
 
-        System.out.println("Enter your personal data, please... ");
+        System.out.println("Enter personal data, please... ");
 
         String name = parseAndValidateInputString(
                 "Name: ",
@@ -509,51 +508,22 @@ if (username.equals(Username) && password.equals(Password)) {
 
     }
 
-    private static List<Passenger> enteringPassengersData(int number) {
+    private static List<Person> enteringPassengersData(int number) {
 
-        List<Passenger> passengersList = Arrays.asList();
+        List<Person> passengersList = Arrays.asList();
 
         for (int i = 0; i < number; i++) {
 
-//            passengersList.add(
-//                    new Passenger(
-//                            parseAndValidateInputString(
-//                                    "Enter Name: ",
-//                                    "^[A-Z][A-Za-z ]+",
-//                                    "Name",
-//                                    "Vasia"
-//                            ),
-//                            parseAndValidateInputString(
-//                                    "Enter Surname: ",
-//                                    "^[A-Z][A-Za-z ]+",
-//                                    "Surname",
-//                                    "Sidorov"
-//                            ),
-//                            parseDate(
-//                                    parseAndValidateInputString(
-//                                            "Enter Date: ",
-//                                            "^[0-9][0-9]/[0-9][0-9]/[12][09][0-9][0-9]",
-//                                            "Date",
-//                                            "21/07/1990"
-//                                    )
-//                            ),
-//                            Sex.MALE
-////                            Sex.valueOf(parseAndValidateInputString(
-////                                    "Enter Sex: ",
-////                                    "Male|Female",
-////                                    "Sex",
-////                                    "Female"
-////                                    ).toUpperCase()
-////                            ).getName()
-//
-//                    ));
+            System.out.println("Enter passenger #" + (+i + +1) + "'s (of " + number + ") personal data, please... ");
+
+            System.out.println(createPerson(PersonType.PASSENGER));
+//            passengersList.add(createPerson(PersonType.PASSENGER));
 
         }
 
         return passengersList;
 
     }
-
 
     private static void createBooking(Flight flight) {
         if (flight == null) return;

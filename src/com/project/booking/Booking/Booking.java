@@ -1,9 +1,9 @@
 package com.project.booking.Booking;
 
 import com.project.booking.Constants.DataUtil;
-import com.project.booking.Customer.Customer;
+import com.project.booking.Persons.Customer;
 import com.project.booking.Flight.Flight;
-import com.project.booking.Passenger.Passenger;
+import com.project.booking.Persons.Passenger;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
