@@ -14,7 +14,9 @@ import com.project.booking.Flight.FlightController;
 import com.project.booking.Persons.Passenger;
 import com.project.booking.Persons.Person;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -49,12 +51,12 @@ class ConsoleApp implements FileUtil, DataUtil {
         return offset;
     }
 
-
     void startApp() {
 
         FlightController flightsDB = new FlightController();
         BookingController bookingsDB = new BookingController();
 
+        flightDbFromScheduleFile(flightsDB);
         flightsDB.readData(FLIGHTS_FILE_PATH);
         bookingsDB.readData(BOOKINGS_FILE_PATH);
 
@@ -128,6 +130,31 @@ class ConsoleApp implements FileUtil, DataUtil {
                     break;
 
                 case 5:
+
+                    System.out.println("Searching flights...");
+
+                    System.out.println("Enter personal data, please... ");
+
+                    String name = parseAndValidateInputString(
+                            "Name: ",
+                            "^[A-Z][A-Za-z ]+",
+                            "Name",
+                            "Vasia"
+                    );
+                    String surname = parseAndValidateInputString(
+                            "Surname: ",
+                            "^[A-Z][A-Za-z ]+",
+                            "Surname",
+                            "Sidorov"
+                    );
+
+                    bookingsDB.getAllBookings().stream()
+                            .filter(x ->
+                                    bookingContainsPassengerWithName(x, name)
+                                            && bookingContainsPassengerWithSurname(x, surname)
+                                            || x.getCustomer().getName().equalsIgnoreCase(name)
+                                            && x.getCustomer().getSurname().equalsIgnoreCase(surname))
+                            .forEach(System.out::println);
 
                     break;
 
@@ -303,9 +330,7 @@ class ConsoleApp implements FileUtil, DataUtil {
             if (choice >= 1 && choice < searchResult.size()) {
 
                 displayingFlightInformation(searchResult.get(choice - 1));
-//                List<Passenger> passengerList = enteringPassengersData(number);
-//                System.out.println(passengerList);
-                Booking  booking = createBooking(searchResult.get(choice - 1), number);
+                Booking booking = createBooking(searchResult.get(choice - 1), number);
 
                 System.out.println(booking);
                 System.out.println("Your booking is :" + booking);
@@ -328,9 +353,105 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     }
 
+    private static void displayingOnlineTable(FlightController flightsDB) {
+
+        final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s |\n";
+        final String DASHES = new String(new char[76]).replace("\0", "-");
+
+        System.out.printf("%-64s\n", "Online Table Airport: Kiev Boryspil, "
+                + LocalDateTime.now(ZoneId.of(TIME_ZONE))
+                .format(DateTimeFormatter
+                        .ofPattern(DATE_TIME_FORMAT)));
+
+        System.out.printf("%s\n", DASHES);
+
+        System.out.printf(PRINT_FORMAT,
+                "Flight", "Date", "Time", "Destination", "Duration"
+        );
+
+        System.out.printf("%s\n", DASHES);
+
+        flightsDB.getAllFlights()
+                .stream()
+                .sorted(Comparator.comparingLong(Flight::getDepartureDateTime))
+                .forEach(flight -> System.out.printf(PRINT_FORMAT,
+                        flight.getFlightNumber(),
+                        dateLongToString(flight.getDepartureDateTime(), DATE_FORMAT),
+                        dateLongToString(flight.getDepartureDateTime(), TIME_FORMAT),
+                        flight.getDestination(),
+                        timeOfDayLongToString(flight.getEstFlightDuration()))
+
+                );
+
+        System.out.printf("%s\n", DASHES);
+
+    }
+
+    private static void displayingFlightInformation(Flight flight) {
+
+        final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s | %15s |\n";
+        final String DASHES = new String(new char[94]).replace("\0", "-");
+
+        System.out.printf("%s\n", "Flight infomation:");
+        System.out.printf("%s\n", DASHES);
+
+        System.out.printf(PRINT_FORMAT,
+                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats"
+        );
+
+        System.out.printf("%s\n", DASHES);
+
+        printFlight(flight, PRINT_FORMAT);
+
+        System.out.printf("%s\n", DASHES);
+
+    }
+
+    private static void printFlight(Flight flight, String format) {
+        System.out.printf(format,
+                flight.getFlightNumber(),
+                dateLongToString(flight.getDepartureDateTime(), DATE_FORMAT),
+                dateLongToString(flight.getDepartureDateTime(), TIME_FORMAT),
+                flight.getDestination(),
+                timeOfDayLongToString(flight.getEstFlightDuration()),
+                flight.getMaxNumSeats() - flight.getPassengersOnBoard()
+        );
+    }
+
+    private static Booking createBooking(Flight flight, int passagersNumber) {
+
+        Booking result = null;
+
+        if (flight != null && passagersNumber > 0) {
+
+            result = new Booking(flight);
+
+            for (int i = 0; i < passagersNumber; i++) {
+                System.out.println("Enter passenger #" + (+i + +1) + "'s (of " + passagersNumber + ") personal data, please... ");
+
+                result.addPassenger(createPerson(PersonType.PASSENGER));
+
+            }
+
+            result.getPassengers().forEach(flight::addPassenger);
+            result.setCustomer(customerApp);
+
+        }
+
+        return result;
+
+    }
+
     private static void cancelBooking(BookingController bookingsDB) {
 
         boolean control = true;
+
+        if (bookingsDB.getAllBookings().size() == 0) {
+
+            System.out.println("There is no booking made in the DB.");
+            control = false;
+
+        }
 
         while (control) {
 
@@ -351,26 +472,38 @@ class ConsoleApp implements FileUtil, DataUtil {
 
             }
 
-            if (bookingsDB.getAllBookings().stream().mapToLong(Booking::getBookingNumber).findAny().isPresent()) {
+            final long choiceFinal = choice;
 
-                final long choiceFinal = choice;
-                System.out.println("deleteing booking");
-
-                Booking object = bookingsDB.getAllBookings()
-                        .stream().filter(x->x.getBookingNumber() == choiceFinal)
-                        .findFirst().orElseGet(null);
-                if (object != null) bookingsDB.getAllBookings().remove(object);
+            if (choice == 0) {
 
                 control = false;
 
-            } else if (choice == 0) {
-
-                control = false;
-
-            } else
+            } else if (choice == -1) {
 
                 System.out.println(
                         "Your choice is wrong. Please enter booking ID to cancel or 0 to return: ");
+
+            } else if (!bookingsDB.getAllBookings().stream()
+                    .filter(x -> x.getBookingNumber() == choiceFinal)
+                    .collect(Collectors.toList()).isEmpty()) {
+
+                System.out.println("deleteing booking");
+
+                Booking booking = bookingsDB.getAllBookings().stream().
+                        filter(item -> item.getBookingNumber() == choiceFinal)
+                        .findFirst().get();
+
+                booking.getPassengers().forEach(booking.getFlight()::deletePassenger);
+                bookingsDB.deleteBookingByObject(booking);
+
+                control = false;
+
+            } else {
+
+                System.out.println(
+                        "There is no booking with ID=\'" + choice + "\' in gb. Please enter booking ID to cancel or 0 to return: ");
+
+            }
 
         }
 
@@ -378,14 +511,49 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     private static void printCancelBookingMenu(BookingController bookingsDB) {
 
-        bookingsDB.getAllBookings().stream().forEach(System.out::println);
+        if (bookingsDB.getAllBookings().size() > 0)
+            bookingsDB.getAllBookings().stream().forEach(System.out::println);
+        else
+            System.out.println("There is no booking made in the DB.");
         System.out.println("0.   Return to the main menu.");
 
     }
 
-    public void closeSession() {
-        customerApp = null;
-        loginCustomer();
+    private static void printBookings(List<Booking> bookingsList) {
+
+        final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s | %15s |\n";
+        final String DASHES = new String(new char[94]).replace("\0", "-");
+
+        System.out.printf("   %s\n   ", DASHES);
+        System.out.printf(
+                PRINT_FORMAT,
+                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats"
+        );
+        System.out.printf("   %s\n", DASHES);
+
+
+        bookingsList
+                .forEach(booking -> {
+
+                    System.out.print(bookingsList.indexOf(booking) + +1 + ". ");
+                    printBooking(booking, PRINT_FORMAT);
+
+                });
+
+        System.out.println("0.   Return to the main menu.");
+
+    }
+
+    private static void printBooking(Booking booking, String format) {
+
+        System.out.printf(format,
+                booking.getBookingNumber(),
+                booking.getDateTime().format(DateTimeFormatter.ofPattern(DATE_FORMAT)),
+                booking.getDateTime().format(DateTimeFormatter.ofPattern(TIME_FORMAT))
+        );
+
+        printFlight(booking.getFlight(), "%s");
+
     }
 
     public boolean loginCustomer() {
@@ -434,6 +602,11 @@ class ConsoleApp implements FileUtil, DataUtil {
                     System.out.printf("Invalid option (%s), choose login or register!%n", input);
             }
         }
+    }
+
+    public void closeSession() {
+        customerApp = null;
+        loginCustomer();
     }
 
     private static Person createPerson(PersonType personType) {
@@ -502,107 +675,6 @@ class ConsoleApp implements FileUtil, DataUtil {
         return result;
     }
 
-    private static void displayingOnlineTable(FlightController flightsDB) {
-
-        final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s |\n";
-        final String DASHES = new String(new char[76]).replace("\0", "-");
-
-        System.out.printf("%-64s\n", "Online Table Airport: Kiev Boryspil, "
-                + LocalDateTime.now(ZoneId.of(TIME_ZONE))
-                .format(DateTimeFormatter
-                        .ofPattern(DATE_TIME_FORMAT)));
-
-        System.out.printf("%s\n", DASHES);
-
-        System.out.printf(PRINT_FORMAT,
-                "Flight", "Date", "Time", "Destination", "Duration"
-        );
-
-        System.out.printf("%s\n", DASHES);
-
-        flightsDB.getAllFlights()
-                .stream()
-                .sorted(Comparator.comparingLong(Flight::getDepartureDateTime))
-                .forEach(flight -> System.out.printf(PRINT_FORMAT,
-                        flight.getFlightNumber(),
-                        dateLongToString(flight.getDepartureDateTime(), DATE_FORMAT),
-                        dateLongToString(flight.getDepartureDateTime(), TIME_FORMAT),
-                        flight.getDestination(),
-                        timeOfDayLongToString(flight.getEstFlightDuration()))
-
-                );
-
-        System.out.printf("%s\n", DASHES);
-
-    }
-
-    private static void displayingFlightInformation(Flight flight) {
-
-        final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s | %15s |\n";
-        final String DASHES = new String(new char[94]).replace("\0", "-");
-
-        System.out.printf("%s\n", "Flight infomation:");
-        System.out.printf("%s\n", DASHES);
-
-        System.out.printf(PRINT_FORMAT,
-                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats"
-        );
-
-        System.out.printf("%s\n", DASHES);
-
-        printFlight(flight, PRINT_FORMAT);
-
-        System.out.printf("%s\n", DASHES);
-
-    }
-
-    private static void printFlight(Flight flight, String format) {
-        System.out.printf(format,
-                flight.getFlightNumber(),
-                dateLongToString(flight.getDepartureDateTime(), DATE_FORMAT),
-                dateLongToString(flight.getDepartureDateTime(), TIME_FORMAT),
-                flight.getDestination(),
-                timeOfDayLongToString(flight.getEstFlightDuration()),
-                flight.getMaxNumSeats() - flight.getPassengersOnBoard()
-        );
-    }
-
-    private static List<Passenger> enteringPassengersData(int number) {
-
-        ArrayList<Passenger> passengersList = new ArrayList<>();
-        Passenger passenger;
-
-        for (int i = 0; i < number; i++) {
-            System.out.println("Enter passenger #" + (+i + +1) + "'s (of " + number + ") personal data, please... ");
-            passenger = (Passenger) createPerson(PersonType.PASSENGER);
-            passengersList.add(passenger);
-            System.out.println(passengersList);
-        }
-        return passengersList;
-    }
-
-    private static Booking createBooking(Flight flight, int passagersNumber) {
-
-        Booking result = null;
-
-        if (flight != null && passagersNumber > 0) {
-
-            result = new Booking(flight);
-
-            for (int i = 0; i < passagersNumber; i++) {
-                System.out.println("Enter passenger #" + (+i + +1) + "'s (of " + passagersNumber + ") personal data, please... ");
-
-                result.addPassenger(createPerson(PersonType.PASSENGER));
-
-            }
-        }
-
-        // add passengers from booking to flight
-
-        return result;
-
-    }
-
     private static long parseTime(String str) {
 
         LocalTime time = LocalTime.now(ZoneId.of(TIME_ZONE));
@@ -640,7 +712,6 @@ class ConsoleApp implements FileUtil, DataUtil {
 
         }
 
-//        return date.atStartOfDay(ZoneId.of(TIME_ZONE)).toInstant().toEpochMilli();
         return date.atStartOfDay().toInstant(zoneOffset).toEpochMilli();
 
     }
@@ -769,6 +840,25 @@ class ConsoleApp implements FileUtil, DataUtil {
 
         }
 
+        flightsDB.saveData(FLIGHTS_FILE_PATH);
+
+    }
+
+    private static boolean bookingContainsPassengerWithName(Booking booking, String name) {
+
+        return
+                !booking.getPassengers().stream()
+                        .filter(x -> x.getName().equalsIgnoreCase(name))
+                        .collect(Collectors.toList()).isEmpty();
+
+    }
+
+    private static boolean bookingContainsPassengerWithSurname(Booking booking, String surname) {
+
+        return
+                !booking.getPassengers().stream()
+                        .filter(x -> x.getSurname().equalsIgnoreCase(surname))
+                        .collect(Collectors.toList()).isEmpty();
 
     }
 

@@ -47,6 +47,12 @@ public class BookingService {
 
     }
 
+    public void deleteBookingByObject(Booking booking) {
+
+        bookingDao.deleteBooking(booking);
+
+    }
+
     public int count() {
 
         return bookingDao.getAllBookings().size();

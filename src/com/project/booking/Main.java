@@ -1,7 +1,6 @@
 package com.project.booking;
 
 import com.project.booking.Logger.AppLogger;
-import com.project.booking.Persons.Customer;
 
 import java.io.IOException;
 

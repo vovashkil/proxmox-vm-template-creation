@@ -40,6 +40,12 @@ public class FlightController {
 
     }
 
+    public void deleteFlightByObject(Flight flight) {
+
+        flightService.deleteFlightByObject(flight);
+
+    }
+
     public int count() {
 
         return flightService.count();
