@@ -7,7 +7,6 @@ import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
 import com.project.booking.Constants.PersonType;
 import com.project.booking.Constants.Sex;
-import com.project.booking.DAO.CollectionBookingDAO;
 import com.project.booking.Persons.Customer;
 import com.project.booking.Persons.CustomerController;
 import com.project.booking.Flight.Flight;
@@ -132,13 +131,30 @@ class ConsoleApp implements FileUtil, DataUtil {
 
                 case 5:
 
-                    System.out.println("Searching my flights...");
+                    System.out.println("Searching flights...");
 
-                    String name = "First";
-                    String surname = "Last";
+                    System.out.println("Enter personal data, please... ");
 
-//                    bookingsDB.getAllBookings().stream()
-//                            .filter(x->x.)
+                    String name = parseAndValidateInputString(
+                            "Name: ",
+                            "^[A-Z][A-Za-z ]+",
+                            "Name",
+                            "Vasia"
+                    );
+                    String surname = parseAndValidateInputString(
+                            "Surname: ",
+                            "^[A-Z][A-Za-z ]+",
+                            "Surname",
+                            "Sidorov"
+                    );
+
+                    bookingsDB.getAllBookings().stream()
+                            .filter(x ->
+                                    bookingContainsPassengerWithName(x, name)
+                                            && bookingContainsPassengerWithSurname(x, surname)
+                                            || x.getCustomer().getName().equalsIgnoreCase(name)
+                                            && x.getCustomer().getSurname().equalsIgnoreCase(surname))
+                            .forEach(System.out::println);
 
                     break;
 
@@ -418,6 +434,7 @@ class ConsoleApp implements FileUtil, DataUtil {
             }
 
             result.getPassengers().forEach(flight::addPassenger);
+            result.setCustomer(customerApp);
 
         }
 
@@ -824,6 +841,24 @@ class ConsoleApp implements FileUtil, DataUtil {
         }
 
         flightsDB.saveData(FLIGHTS_FILE_PATH);
+
+    }
+
+    private static boolean bookingContainsPassengerWithName(Booking booking, String name) {
+
+        return
+                !booking.getPassengers().stream()
+                        .filter(x -> x.getName().equalsIgnoreCase(name))
+                        .collect(Collectors.toList()).isEmpty();
+
+    }
+
+    private static boolean bookingContainsPassengerWithSurname(Booking booking, String surname) {
+
+        return
+                !booking.getPassengers().stream()
+                        .filter(x -> x.getSurname().equalsIgnoreCase(surname))
+                        .collect(Collectors.toList()).isEmpty();
 
     }
 
