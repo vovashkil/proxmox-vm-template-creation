@@ -40,6 +40,12 @@ public class BookingController {
 
     }
 
+    public void deleteBookingByObject(Booking booking) {
+
+        bookingService.deleteBookingByObject(booking);
+
+    }
+
     public int count() {
 
         return bookingService.count();

@@ -7,6 +7,7 @@ import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
 import com.project.booking.Constants.PersonType;
 import com.project.booking.Constants.Sex;
+import com.project.booking.DAO.CollectionBookingDAO;
 import com.project.booking.Persons.Customer;
 import com.project.booking.Persons.CustomerController;
 import com.project.booking.Flight.Flight;
@@ -14,7 +15,9 @@ import com.project.booking.Flight.FlightController;
 import com.project.booking.Persons.Passenger;
 import com.project.booking.Persons.Person;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -54,6 +57,7 @@ class ConsoleApp implements FileUtil, DataUtil {
         FlightController flightsDB = new FlightController();
         BookingController bookingsDB = new BookingController();
 
+        flightDbFromScheduleFile(flightsDB);
         flightsDB.readData(FLIGHTS_FILE_PATH);
         bookingsDB.readData(BOOKINGS_FILE_PATH);
 
@@ -127,6 +131,14 @@ class ConsoleApp implements FileUtil, DataUtil {
                     break;
 
                 case 5:
+
+                    System.out.println("Searching my flights...");
+
+                    String name = "First";
+                    String surname = "Last";
+
+//                    bookingsDB.getAllBookings().stream()
+//                            .filter(x->x.)
 
                     break;
 
@@ -443,6 +455,8 @@ class ConsoleApp implements FileUtil, DataUtil {
 
             }
 
+            final long choiceFinal = choice;
+
             if (choice == 0) {
 
                 control = false;
@@ -452,27 +466,25 @@ class ConsoleApp implements FileUtil, DataUtil {
                 System.out.println(
                         "Your choice is wrong. Please enter booking ID to cancel or 0 to return: ");
 
-            } else if (bookingsDB.getAllBookings().stream().mapToLong(Booking::getBookingNumber).findAny().isPresent()) {
+            } else if (!bookingsDB.getAllBookings().stream()
+                    .filter(x -> x.getBookingNumber() == choiceFinal)
+                    .collect(Collectors.toList()).isEmpty()) {
 
-                final long choiceFinal = choice;
                 System.out.println("deleteing booking");
 
-                Booking object = bookingsDB.getAllBookings()
-                        .stream().filter(x -> x.getBookingNumber() == choiceFinal)
-                        .findFirst().orElseGet(null);
-                if (object != null) {
+                Booking booking = bookingsDB.getAllBookings().stream().
+                        filter(item -> item.getBookingNumber() == choiceFinal)
+                        .findFirst().get();
 
-                    object.getPassengers().forEach(object.getFlight()::deletePassenger);
-                    bookingsDB.getAllBookings().remove(object);
-
-                }
+                booking.getPassengers().forEach(booking.getFlight()::deletePassenger);
+                bookingsDB.deleteBookingByObject(booking);
 
                 control = false;
 
             } else {
 
                 System.out.println(
-                        "There is no bookking with ID =" + choice + " in gb. Please enter booking ID to cancel or 0 to return: ");
+                        "There is no booking with ID=\'" + choice + "\' in gb. Please enter booking ID to cancel or 0 to return: ");
 
             }
 
@@ -487,6 +499,43 @@ class ConsoleApp implements FileUtil, DataUtil {
         else
             System.out.println("There is no booking made in the DB.");
         System.out.println("0.   Return to the main menu.");
+
+    }
+
+    private static void printBookings(List<Booking> bookingsList) {
+
+        final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s | %15s |\n";
+        final String DASHES = new String(new char[94]).replace("\0", "-");
+
+        System.out.printf("   %s\n   ", DASHES);
+        System.out.printf(
+                PRINT_FORMAT,
+                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats"
+        );
+        System.out.printf("   %s\n", DASHES);
+
+
+        bookingsList
+                .forEach(booking -> {
+
+                    System.out.print(bookingsList.indexOf(booking) + +1 + ". ");
+                    printBooking(booking, PRINT_FORMAT);
+
+                });
+
+        System.out.println("0.   Return to the main menu.");
+
+    }
+
+    private static void printBooking(Booking booking, String format) {
+
+        System.out.printf(format,
+                booking.getBookingNumber(),
+                booking.getDateTime().format(DateTimeFormatter.ofPattern(DATE_FORMAT)),
+                booking.getDateTime().format(DateTimeFormatter.ofPattern(TIME_FORMAT))
+        );
+
+        printFlight(booking.getFlight(), "%s");
 
     }
 
@@ -774,6 +823,7 @@ class ConsoleApp implements FileUtil, DataUtil {
 
         }
 
+        flightsDB.saveData(FLIGHTS_FILE_PATH);
 
     }
 

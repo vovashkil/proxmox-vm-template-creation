@@ -47,6 +47,12 @@ public class FlightService {
 
     }
 
+    public void deleteFlightByObject(Flight flight) {
+
+        flightDao.remove(flight);
+
+    }
+
     public int count() {
 
         return flightDao.getAll().size();

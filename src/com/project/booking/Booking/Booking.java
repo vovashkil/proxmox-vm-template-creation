@@ -6,12 +6,13 @@ import com.project.booking.Flight.Flight;
 import com.project.booking.Persons.Passenger;
 import com.project.booking.Persons.Person;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Booking implements DataUtil {
+public class Booking implements DataUtil, Serializable {
 
     private long number;
     private final LocalDateTime dateTime = LocalDateTime.now();
@@ -113,14 +114,33 @@ public class Booking implements DataUtil {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return number == booking.number;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int result = 11;
+        int coef = 31;
+
+        result = coef * result + (int) number;
+
+        return (int) number;
+    }
+
+    @Override
     public String toString() {
         return "Booking{" +
                 "number=" + number +
                 ", dateTime='" + dateTime.format(DateTimeFormatter
                                 .ofPattern(DATE_TIME_FORMAT)) + '\'' +
                 ", customer=" + customer +
-                ", flight=" + flight +
-                ", passengers=" + passengers +
+                ",\n\t flight=" + flight +
+                ",\n\t\t passengers=" + passengers +
                 '}';
     }
 }
