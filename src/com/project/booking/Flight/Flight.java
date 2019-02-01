@@ -105,7 +105,7 @@ public class Flight implements DataUtil, Serializable {
 
     }
 
-    public boolean deleteChild(int index) {
+    public boolean deletePassenger(int index) {
 
         if (index >= 0 && index < passengers.size()) {
 
