@@ -20,7 +20,8 @@ public class CustomerService {
     }
 
     public void displayAllCustomers() {
-        customerDao.getAllCustomers().forEach(System.out::println);
+        customerDao.getAllCustomers()
+                .forEach(System.out::println);
     }
 
     public void saveCustomer(Customer customer) {
@@ -49,7 +50,8 @@ public class CustomerService {
     }
 
     public int count() {
-        return customerDao.getAllCustomers().size();
+        return customerDao.getAllCustomers()
+                .size();
     }
 
     public Customer getCustomerById(int index) {

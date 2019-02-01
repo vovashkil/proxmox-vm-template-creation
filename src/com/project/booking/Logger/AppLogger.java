@@ -18,12 +18,6 @@ public class AppLogger {
     static public void setup() throws IOException {
         Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-//        Logger rootLogger = Logger.*getLogger*("");
-//        Handler[] handlers = rootLogger.getHandlers();
-//        if (handlers[0] instanceof ConsoleHandler) {
-//            rootLogger.removeHandler(handlers[0]);
-//        }
-
         logger.setLevel(Level.ALL);
         fileTxt = new FileHandler(LOG_FILEPATH_APP);
 
@@ -31,14 +25,13 @@ public class AppLogger {
         fileTxt.setFormatter(new Formatter() {
             @Override
             public String format(LogRecord record) {
-                return record.getLevel()
-                        + " "
-                        + LocalDateTime.now(ZoneId.of(TIME_ZONE))
+                return LocalDateTime.now(ZoneId.of(TIME_ZONE))
                         .format(DateTimeFormatter
                                 .ofPattern(DATE_TIME_FORMAT))
-                        + " || "
+                        + " "
+                        + record.getLevel() + " || "
                         + record.getSourceClassName().substring(
-                        record.getSourceClassName().lastIndexOf(".")+1,
+                        record.getSourceClassName().lastIndexOf(".") + 1,
                         record.getSourceClassName().length())
                         + "."
                         + record.getSourceMethodName()
@@ -47,7 +40,6 @@ public class AppLogger {
             }
         });
         logger.addHandler(fileTxt);
-
         logger.setUseParentHandlers(false);
     }
 }
