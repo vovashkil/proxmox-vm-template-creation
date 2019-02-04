@@ -41,5 +41,4 @@ public class CustomerController {
     public Customer getCustomerByLogin(String loginName, String password) {
         return customerService.getCustomerByLogin(loginName, password);
     }
-
 }
