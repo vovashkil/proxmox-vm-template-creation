@@ -21,6 +21,8 @@ import java.nio.file.Paths;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -220,7 +222,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                 .filter(
                         item -> item.getDestination().equalsIgnoreCase(destination) &&
                                 item.getDepartureDateTime() > parseDate(date) &&
-                                (item.getMaxNumSeats() - item.getPassengersOnBoard()) >= number
+                                ((item.getMaxNumSeats() - item.getPassengersOnBoard()) >= number)
                 )
                 .sorted(Comparator.comparingLong(Flight::getDepartureDateTime))
                 .collect(Collectors.toList());
@@ -247,12 +249,10 @@ class ConsoleApp implements FileUtil, DataUtil {
                 choice = -1;
             }
 
-            if (choice >= 1 && choice < searchResult.size()) {
+            if (choice >= 1 && choice <= searchResult.size()) {
                 displayingFlightInformation(searchResult.get(choice - 1));
                 Booking booking = createBooking(searchResult.get(choice - 1), number);
 
-                //System.out.println(booking);
-                //System.out.println("Your booking is :" + booking);
                 displayBookingInfo(booking);
                 bookingsDB.saveBooking(booking);
                 control = false;
@@ -534,11 +534,10 @@ class ConsoleApp implements FileUtil, DataUtil {
                                 "21/07/1990"
                         ));
         Sex sex = Sex.valueOf(parseAndValidateInputString(
-                "Sex (MALE OR FEMALE):  ",
-                "MALE|FEMALE",
+                "Sex (Male or Female):  ",
+                "(?i)Male|(?i)Female",
                 "Sex",
-                "MALE"
-        ));
+                "Male").toUpperCase());
 
         if (personType == PersonType.CUSTOMER) {
             String loginName = parseAndValidateInputString(

@@ -25,7 +25,6 @@ public class ComUtil {
     public static String timeOfDayLongToString(Long time) {
         return LocalTime.ofNanoOfDay(time)
                 .format(DateTimeFormatter.ofPattern(TIME_FORMAT));
-
     }
 
     public static long parseTime(String str) {
@@ -83,4 +82,5 @@ public class ComUtil {
         }
         return result;
     }
+
 }
