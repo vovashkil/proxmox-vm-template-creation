@@ -14,19 +14,18 @@ import com.project.booking.Flight.FlightController;
 import com.project.booking.Persons.Passenger;
 import com.project.booking.Persons.Person;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static com.project.booking.Constants.ComUtil.*;
 
 class ConsoleApp implements FileUtil, DataUtil {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -52,7 +51,6 @@ class ConsoleApp implements FileUtil, DataUtil {
     }
 
     void startApp() {
-
         FlightController flightsDB = new FlightController();
         BookingController bookingsDB = new BookingController();
 
@@ -63,101 +61,68 @@ class ConsoleApp implements FileUtil, DataUtil {
         boolean control = true;
 
         while (control) {
-
             printMenuMain();
 
             Scanner input = new Scanner(System.in);
             System.out.print("Please enter your choice [1-8]: ");
+
             int choice;
 
             try {
-
                 choice = input.nextInt();
-
             } catch (InputMismatchException e) {
-
                 choice = -1;
-
             }
 
             switch (choice) {
                 case 1:
-
                     System.out.println("Displaying online table...");
-
                     displayingOnlineTable(flightsDB);
-
                     break;
-
                 case 2:
-
                     System.out.println("Displaying flight information...");
-
                     String flightNumber = parseAndValidateInputString(
                             "Enter Flight number: ",
                             "^[A-Za-z][A-Za-z][0-9]+",
                             "Flight number",
-                            "PS0779"
-                    );
-
+                            "PS0779");
                     if (flightsDB.getAllFlights().stream().map(Flight::getFlightNumber).anyMatch(flightNumber::equalsIgnoreCase))
-
                         flightsDB.getAllFlights()
                                 .stream().filter(item -> item.getFlightNumber()
                                 .equalsIgnoreCase(flightNumber))
                                 .forEach(ConsoleApp::displayingFlightInformation);
-
                     else
-
                         System.out.println("Sorry, there is no flight " + flightNumber + " in the db.");
-
                     break;
-
                 case 3:
-
                     System.out.println("Flight search and booking...");
-
                     searchAndBooking(flightsDB, bookingsDB);
-
                     break;
-
                 case 4:
-
                     System.out.println("Booking cancelling...");
-
                     cancelBooking(bookingsDB);
-
                     break;
-
                 case 5:
-
                     System.out.println("Searching flights...");
-
                     System.out.println("Enter personal data, please... ");
-
                     String name = parseAndValidateInputString(
                             "Name: ",
                             "^[A-Z][A-Za-z ]+",
                             "Name",
-                            "Vasia"
-                    );
+                            "Vasia");
                     String surname = parseAndValidateInputString(
                             "Surname: ",
                             "^[A-Z][A-Za-z ]+",
                             "Surname",
-                            "Sidorov"
-                    );
-
+                            "Sidorov");
                     bookingsDB.getAllBookings().stream()
                             .filter(x ->
                                     bookingContainsPassengerWithName(x, name)
                                             && bookingContainsPassengerWithSurname(x, surname)
                                             || x.getCustomer().getName().equalsIgnoreCase(name)
                                             && x.getCustomer().getSurname().equalsIgnoreCase(surname))
-                            .forEach(System.out::println);
-
+                            .forEach(ConsoleApp::displayBookingInfo);
                     break;
-
                 case 6:
                     for (; ; ) {
                         if (loginCustomer()) {
@@ -165,61 +130,36 @@ class ConsoleApp implements FileUtil, DataUtil {
                         }
                     }
                     break;
-
                 case 7:
-
                     System.out.println("Creating new list of flights from schedule...");
-
                     flightDbFromScheduleFile(flightsDB);
-
                     break;
-
                 case 8:
-
                     control = false;
 
                     customersDB.saveData(CUSTOMERS_FILE_PATH);
                     flightsDB.saveData(FLIGHTS_FILE_PATH);
                     bookingsDB.saveData(BOOKINGS_FILE_PATH);
-
                     break;
-
                 case 12:
-
                     System.out.println("Displaying entire list of flights...");
-
                     flightsDB.displayAllFlights();
-
                     break;
-
                 case 13:
-
                     System.out.println("Loading a list of flights from file...");
-
                     flightsDB.readData(FLIGHTS_FILE_PATH);
-
                     break;
-
                 case 14:
-
                     System.out.println("Saving the list of flights to file...");
-
                     flightsDB.saveData(FLIGHTS_FILE_PATH);
-
                     break;
-
                 default:
                     System.out.println("Your choice is wrong. Please repeat your choice.");
-
-
             }
-
         }
-
     }
 
     private static void printMenuMain() {
-
         System.out.println("1. Online table.");
         System.out.println("2. Flight information.");
         System.out.println("3. Flights search and booking.");
@@ -232,12 +172,9 @@ class ConsoleApp implements FileUtil, DataUtil {
         System.out.println("12. test. Display all flights.");
         System.out.println("13. test. Load flights from file.");
         System.out.println("14. test. Save flights to file.");
-
-
     }
 
     private static void printSearchResultsMenu(List<Flight> flightList) {
-
         System.out.println("Found flights matched criteria...");
 
         final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s | %15s |\n";
@@ -246,38 +183,29 @@ class ConsoleApp implements FileUtil, DataUtil {
         System.out.printf("   %s\n   ", DASHES);
         System.out.printf(
                 PRINT_FORMAT,
-                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats"
-        );
+                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats");
         System.out.printf("   %s\n", DASHES);
-
 
         flightList
                 .forEach(flight -> {
-
                     System.out.print(flightList.indexOf(flight) + +1 + ". ");
                     ConsoleApp.printFlight(flight, PRINT_FORMAT);
-
                 });
-
         System.out.println("0.   Return to the main menu.");
-
     }
 
     private static void searchAndBooking(FlightController flightsDB, BookingController bookingsDB) {
-
         String destination = parseAndValidateInputString(
                 "Enter Destination: ",
                 "^[A-Z][A-Za-z ]+",
                 "Destination",
-                "Frankfurt"
-        );
+                "Frankfurt");
 
         String date = parseAndValidateInputString(
                 "Enter Date: ",
                 "^[0-9][0-9]/[0-9][0-9]/[2][0][1-2][0-9]",
                 "Date",
-                "25/11/2019"
-        );
+                "25/11/2019");
 
         int number = parseAndValidateInputInteger(
                 "Enter number of passengers: ",
@@ -285,8 +213,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                 flightsDB.getAllFlights()
                         .stream()
                         .mapToInt(Flight::getMaxNumSeats)
-                        .max().orElse(-1)
-        );
+                        .max().orElse(-1));
 
         List<Flight> searchResult = flightsDB.getAllFlights()
                 .stream()
@@ -299,16 +226,13 @@ class ConsoleApp implements FileUtil, DataUtil {
                 .collect(Collectors.toList());
 
         if (searchResult.isEmpty()) {
-
             System.out.println("Sorry, no flight matching the criteria found. Repeat yor search.");
             return;
-
         }
 
         boolean control = true;
 
         while (control) {
-
             printSearchResultsMenu(searchResult);
 
             Scanner input = new Scanner(System.in);
@@ -318,43 +242,66 @@ class ConsoleApp implements FileUtil, DataUtil {
             int choice;
 
             try {
-
                 choice = input.nextInt();
-
             } catch (InputMismatchException e) {
-
                 choice = -1;
-
             }
 
             if (choice >= 1 && choice < searchResult.size()) {
-
                 displayingFlightInformation(searchResult.get(choice - 1));
                 Booking booking = createBooking(searchResult.get(choice - 1), number);
 
-                System.out.println(booking);
-                System.out.println("Your booking is :" + booking);
-
+                //System.out.println(booking);
+                //System.out.println("Your booking is :" + booking);
+                displayBookingInfo(booking);
                 bookingsDB.saveBooking(booking);
-
                 control = false;
-
             } else if (choice == 0) {
-
                 control = false;
-
             } else
-
                 System.out.println(
                         "Your choice is wrong. Please enter the flight order number [1-" +
                                 searchResult.size() + "] to book or 0 to return.");
-
         }
+    }
 
+    private static void displayBookingInfo(Booking booking) {
+        final String PRINT_FORMAT = "| %-15s | %-18s | %-20s | %-19s | %6s |\n";
+        final String PRINT_PASSENGER_FORMAT = "| %-7s | %-30s | %-6s | %-15s | %-20s |\n";
+        final String DASHES = new String(new char[94]).replace("\0", "-");
+
+        System.out.printf("%-94s\n", "Current Booking Information on time: "
+                + LocalDateTime.now(ZoneId.of(TIME_ZONE))
+                .format(DateTimeFormatter
+                        .ofPattern(DATE_TIME_FORMAT)));
+        System.out.printf("%s\n", DASHES);
+        System.out.printf(PRINT_FORMAT, "BookingNumber", "Date and Time", "Customer Info", "E-mail", "Count");
+        System.out.printf("%s\n", DASHES);
+        System.out.printf(PRINT_FORMAT,
+                booking.getBookingNumber(),
+                booking.getDateTime().format(DateTimeFormatter
+                        .ofPattern(DATE_TIME_FORMAT)),
+                booking.getCustomer().getName().concat(" ").concat(booking.getCustomer().getSurname()),
+                booking.getCustomer().getLoginName(),
+                booking.getPassengers().size());
+        System.out.printf("%s\n", DASHES);
+        displayingFlightInformation(booking.getFlight());
+        System.out.printf(PRINT_PASSENGER_FORMAT, "Number", "Passenger Info", "Sex", "Date Of Birth", "Passport Number");
+        System.out.printf("%s\n", DASHES);
+
+        booking.getPassengers()
+                .stream()
+                .forEach(person -> {
+                    System.out.printf(PRINT_PASSENGER_FORMAT, booking.getPassengers().indexOf(person) + 1 + " of " + booking.getPassengers().size(),
+                            person.getName().concat(" ").concat(person.getSurname()),
+                            person.getSex(),
+                            dateLongToString(person.getBirthDate(), DataUtil.DATE_FORMAT),
+                            ((Passenger) person).getPassportNumber());
+                    System.out.printf("%s\n", DASHES);
+                });
     }
 
     private static void displayingOnlineTable(FlightController flightsDB) {
-
         final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s |\n";
         final String DASHES = new String(new char[76]).replace("\0", "-");
 
@@ -364,11 +311,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                         .ofPattern(DATE_TIME_FORMAT)));
 
         System.out.printf("%s\n", DASHES);
-
-        System.out.printf(PRINT_FORMAT,
-                "Flight", "Date", "Time", "Destination", "Duration"
-        );
-
+        System.out.printf(PRINT_FORMAT, "Flight", "Date", "Time", "Destination", "Duration");
         System.out.printf("%s\n", DASHES);
 
         flightsDB.getAllFlights()
@@ -380,11 +323,8 @@ class ConsoleApp implements FileUtil, DataUtil {
                         dateLongToString(flight.getDepartureDateTime(), TIME_FORMAT),
                         flight.getDestination(),
                         timeOfDayLongToString(flight.getEstFlightDuration()))
-
                 );
-
         System.out.printf("%s\n", DASHES);
-
     }
 
     private static void displayingFlightInformation(Flight flight) {
@@ -419,141 +359,100 @@ class ConsoleApp implements FileUtil, DataUtil {
     }
 
     private static Booking createBooking(Flight flight, int passagersNumber) {
-
         Booking result = null;
 
         if (flight != null && passagersNumber > 0) {
-
             result = new Booking(flight);
-
             for (int i = 0; i < passagersNumber; i++) {
                 System.out.println("Enter passenger #" + (+i + +1) + "'s (of " + passagersNumber + ") personal data, please... ");
-
                 result.addPassenger(createPerson(PersonType.PASSENGER));
-
             }
-
             result.getPassengers().forEach(flight::addPassenger);
             result.setCustomer(customerApp);
-
         }
 
         return result;
-
     }
 
     private static void cancelBooking(BookingController bookingsDB) {
-
         boolean control = true;
 
         if (bookingsDB.getAllBookings().size() == 0) {
-
             System.out.println("There is no booking made in the DB.");
             control = false;
-
         }
 
         while (control) {
-
             printCancelBookingMenu(bookingsDB);
-
             Scanner input = new Scanner(System.in);
             System.out.print("Please enter booking ID to cancel or 0 to return: ");
 
             long choice;
 
             try {
-
                 choice = input.nextLong();
-
             } catch (InputMismatchException e) {
-
                 choice = -1;
-
             }
 
             final long choiceFinal = choice;
 
             if (choice == 0) {
-
                 control = false;
-
             } else if (choice == -1) {
-
                 System.out.println(
                         "Your choice is wrong. Please enter booking ID to cancel or 0 to return: ");
-
             } else if (!bookingsDB.getAllBookings().stream()
                     .filter(x -> x.getBookingNumber() == choiceFinal)
                     .collect(Collectors.toList()).isEmpty()) {
-
                 System.out.println("deleteing booking");
-
                 Booking booking = bookingsDB.getAllBookings().stream().
                         filter(item -> item.getBookingNumber() == choiceFinal)
                         .findFirst().get();
-
                 booking.getPassengers().forEach(booking.getFlight()::deletePassenger);
                 bookingsDB.deleteBookingByObject(booking);
 
                 control = false;
-
             } else {
-
                 System.out.println(
                         "There is no booking with ID=\'" + choice + "\' in gb. Please enter booking ID to cancel or 0 to return: ");
-
             }
-
         }
-
     }
 
     private static void printCancelBookingMenu(BookingController bookingsDB) {
-
         if (bookingsDB.getAllBookings().size() > 0)
             bookingsDB.getAllBookings().stream().forEach(System.out::println);
         else
             System.out.println("There is no booking made in the DB.");
         System.out.println("0.   Return to the main menu.");
-
     }
 
     private static void printBookings(List<Booking> bookingsList) {
-
         final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s | %15s |\n";
         final String DASHES = new String(new char[94]).replace("\0", "-");
 
         System.out.printf("   %s\n   ", DASHES);
         System.out.printf(
                 PRINT_FORMAT,
-                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats"
-        );
+                "Flight", "Date", "Time", "Destination", "Duration", "Available Seats");
         System.out.printf("   %s\n", DASHES);
-
 
         bookingsList
                 .forEach(booking -> {
-
                     System.out.print(bookingsList.indexOf(booking) + +1 + ". ");
                     printBooking(booking, PRINT_FORMAT);
-
                 });
-
         System.out.println("0.   Return to the main menu.");
-
     }
 
     private static void printBooking(Booking booking, String format) {
-
         System.out.printf(format,
                 booking.getBookingNumber(),
                 booking.getDateTime().format(DateTimeFormatter.ofPattern(DATE_FORMAT)),
                 booking.getDateTime().format(DateTimeFormatter.ofPattern(TIME_FORMAT))
         );
-
         printFlight(booking.getFlight(), "%s");
-
     }
 
     public boolean loginCustomer() {
@@ -675,132 +574,15 @@ class ConsoleApp implements FileUtil, DataUtil {
         return result;
     }
 
-    private static long parseTime(String str) {
-
-        LocalTime time = LocalTime.now(ZoneId.of(TIME_ZONE));
-
-        str = str.replaceAll("[^0-9,:]", "");
-
-        try {
-
-            time = LocalTime.parse(str, DateTimeFormatter.ofPattern(TIME_FORMAT));
-
-        } catch (DateTimeParseException e) {
-
-            System.out.println(e.getStackTrace());
-
-        }
-
-        return time.toNanoOfDay();
-
-    }
-
-    private static long parseDate(String str) {
-
-        LocalDate date = LocalDate.now(ZoneId.of(TIME_ZONE));
-        ZoneOffset zoneOffset = date.atStartOfDay(ZoneId.of(TIME_ZONE)).getOffset();
-
-        str = str.replaceAll("[^0-9,/]", "");
-
-        try {
-
-            date = LocalDate.parse(str, DateTimeFormatter.ofPattern(DATE_FORMAT));
-
-        } catch (DateTimeParseException e) {
-
-            System.out.println(e.getStackTrace());
-
-        }
-
-        return date.atStartOfDay().toInstant(zoneOffset).toEpochMilli();
-
-    }
-
-    private static int parseAndValidateInputInteger(String message, int startRange, int endRange) {
-
-        int result = 0;
-        boolean control = true;
-
-        System.out.print(message);
-
-        while (control) {
-            Scanner input = new Scanner(System.in);
-
-            try {
-
-                result = input.nextInt();
-
-            } catch (InputMismatchException e) {
-
-                System.out.print("You entered incorrect type. ");
-                result = -1;
-
-            }
-
-            if (result >= startRange && result <= endRange) control = false;
-            else System.out.print("Enter correct number between " +
-                    startRange + " and " + endRange + " : ");
-
-        }
-        return result;
-    }
-
-    private static String parseAndValidateInputString(String message, String pattern, String name, String example) {
-
-        String result = "";
-        boolean control = true;
-
-        System.out.print(message);
-
-        Scanner input = new Scanner(System.in);
-
-        while (control) {
-
-            result = input.nextLine().trim();
-
-            if (result.trim().matches(pattern)) control = false;
-            else System.out.print("Enter correct " + name + " \'" + pattern + "\' (e.g. " + example + "): ");
-
-        }
-        return result;
-    }
-
-    private static long dateTimeToLong(LocalDateTime dateTime) {
-
-        ZoneOffset zoneOffset = dateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
-        return dateTime.toInstant(zoneOffset).toEpochMilli();
-
-    }
-
-    private static String dateLongToString(Long dateTime, String format) {
-
-        return Instant.ofEpochMilli(dateTime)
-                .atZone(ZoneId.of(TIME_ZONE))
-                .toLocalDateTime()
-                .format(DateTimeFormatter
-                        .ofPattern(format));
-
-    }
-
-    private static String timeOfDayLongToString(Long time) {
-
-        return LocalTime.ofNanoOfDay(time)
-                .format(DateTimeFormatter.ofPattern(TIME_FORMAT));
-
-    }
-
     private static void flightDbFromScheduleFile(FlightController flightsDB) {
-
         System.out.println("Resetting/Generating new database of flights...");
 
         LocalTime currentTime = LocalTime.now(ZoneId.of(TIME_ZONE));
         LocalDate currentDate = LocalDate.now(ZoneId.of(TIME_ZONE));
 
         try (
-
                 Reader reader = Files.newBufferedReader(Paths.get(KBP_SCHEDULE_FILE_PATH));
                 CSVReader csvReader = new CSVReader(reader, ',', '\'', 1);
-
         ) {
 
             String[] nextRecord;
@@ -822,45 +604,33 @@ class ConsoleApp implements FileUtil, DataUtil {
                 );
 
                 flightsDB.saveFlight(
-
                         new Flight(nextRecord[0],
                                 departureDateTimeLong,
                                 flightDurationTimeLong,
                                 "Kiev Boryspil",
                                 nextRecord[2],
                                 150
-
                         ));
-
             }
         } catch (IOException e) {
-
             System.out.println(e.getStackTrace());
             System.out.println(e.getMessage());
-
         }
-
         flightsDB.saveData(FLIGHTS_FILE_PATH);
-
     }
 
     private static boolean bookingContainsPassengerWithName(Booking booking, String name) {
-
         return
                 !booking.getPassengers().stream()
                         .filter(x -> x.getName().equalsIgnoreCase(name))
                         .collect(Collectors.toList()).isEmpty();
-
     }
 
     private static boolean bookingContainsPassengerWithSurname(Booking booking, String surname) {
-
         return
                 !booking.getPassengers().stream()
                         .filter(x -> x.getSurname().equalsIgnoreCase(surname))
                         .collect(Collectors.toList()).isEmpty();
-
     }
-
 }
 

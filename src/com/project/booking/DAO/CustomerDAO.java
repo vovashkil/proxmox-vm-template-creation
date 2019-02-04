@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface CustomerDAO {
     List<Customer> getAllCustomers();
+    Customer getCustomerByIndex(int index);
     void saveCustomer(Customer customer);
     boolean deleteCustomer(int index);
     boolean deleteCustomer(Customer customer);
