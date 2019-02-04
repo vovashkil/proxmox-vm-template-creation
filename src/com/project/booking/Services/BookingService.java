@@ -1,5 +1,6 @@
-package com.project.booking.Booking;
+package com.project.booking.Services;
 
+import com.project.booking.Booking.Booking;
 import com.project.booking.DAO.CollectionBookingDAO;
 import com.project.booking.DAO.BookingDAO;
 

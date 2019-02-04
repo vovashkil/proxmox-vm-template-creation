@@ -1,7 +1,8 @@
-package com.project.booking.Flight;
+package com.project.booking.Services;
 
 import com.project.booking.DAO.CollectionFlightDAO;
 import com.project.booking.DAO.DAO;
+import com.project.booking.Booking.Flight;
 
 import java.util.List;
 

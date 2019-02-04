@@ -1,4 +1,7 @@
-package com.project.booking.Booking;
+package com.project.booking.Controllers;
+
+import com.project.booking.Booking.Booking;
+import com.project.booking.Services.BookingService;
 
 import java.util.List;
 

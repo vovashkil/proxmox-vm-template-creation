@@ -1,12 +1,11 @@
 package com.project.booking.DAO;
 
 import com.project.booking.Logger.AppLogger;
-import com.project.booking.Persons.Customer;
+import com.project.booking.Booking.Customer;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CollectionCustomerDAO implements CustomerDAO {

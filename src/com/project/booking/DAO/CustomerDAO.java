@@ -1,6 +1,6 @@
 package com.project.booking.DAO;
 
-import com.project.booking.Persons.Customer;
+import com.project.booking.Booking.Customer;
 
 import java.util.List;
 

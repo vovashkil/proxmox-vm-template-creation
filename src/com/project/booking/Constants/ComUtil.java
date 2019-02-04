@@ -9,6 +9,14 @@ import java.util.Scanner;
 import static com.project.booking.Constants.DataUtil.*;
 
 public class ComUtil {
+    public static long getCurrentDateTime() {
+        return LocalDateTime.now(ZoneId.of(TIME_ZONE)).toInstant(getZoneOffset()).toEpochMilli();
+    }
+
+    public static ZoneOffset getZoneOffset() {
+        return LocalDateTime.now(ZoneId.of(TIME_ZONE)).atZone(ZoneId.of(TIME_ZONE)).getOffset();
+    }
+
     public static long dateTimeToLong(LocalDateTime dateTime) {
         ZoneOffset zoneOffset = dateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
         return dateTime.toInstant(zoneOffset).toEpochMilli();

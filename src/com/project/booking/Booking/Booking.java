@@ -1,10 +1,6 @@
 package com.project.booking.Booking;
 
 import com.project.booking.Constants.DataUtil;
-import com.project.booking.Persons.Customer;
-import com.project.booking.Flight.Flight;
-import com.project.booking.Persons.Passenger;
-import com.project.booking.Persons.Person;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

@@ -2,17 +2,17 @@ package com.project.booking;
 
 import com.opencsv.CSVReader;
 import com.project.booking.Booking.Booking;
-import com.project.booking.Booking.BookingController;
+import com.project.booking.Controllers.BookingController;
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
 import com.project.booking.Constants.PersonType;
 import com.project.booking.Constants.Sex;
-import com.project.booking.Persons.Customer;
-import com.project.booking.Persons.CustomerController;
-import com.project.booking.Flight.Flight;
-import com.project.booking.Flight.FlightController;
-import com.project.booking.Persons.Passenger;
-import com.project.booking.Persons.Person;
+import com.project.booking.Booking.Customer;
+import com.project.booking.Controllers.CustomerController;
+import com.project.booking.Booking.Flight;
+import com.project.booking.Controllers.FlightController;
+import com.project.booking.Booking.Passenger;
+import com.project.booking.Booking.Person;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -21,8 +21,6 @@ import java.nio.file.Paths;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -32,33 +30,24 @@ import static com.project.booking.Constants.ComUtil.*;
 class ConsoleApp implements FileUtil, DataUtil {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private final CustomerController customersDB;
+    private final CustomerController customersController;
+    private final FlightController flightsController;
+    private final BookingController bookingsController;
+
     private static Customer customerApp;
 
-    LocalDateTime currDateTime = LocalDateTime.now(ZoneId.of(TIME_ZONE));
-    private ZoneOffset offset = currDateTime.atZone(ZoneId.of(TIME_ZONE)).getOffset();
-    private long currentDateTime = currDateTime.toInstant(offset).toEpochMilli();
-
     public ConsoleApp() {
-        this.customersDB = new CustomerController();
-        customersDB.readData(CUSTOMERS_FILE_PATH);
-    }
+        this.customersController = new CustomerController();
+        this.flightsController = new FlightController();
+        this.bookingsController = new BookingController();
 
-    public long getCurrentDateTime() {
-        return currentDateTime;
-    }
-
-    public ZoneOffset getZoneOffset() {
-        return offset;
+        customersController.readData(CUSTOMERS_FILE_PATH);
     }
 
     void startApp() {
-        FlightController flightsDB = new FlightController();
-        BookingController bookingsDB = new BookingController();
-
-        flightDbFromScheduleFile(flightsDB);
-        flightsDB.readData(FLIGHTS_FILE_PATH);
-        bookingsDB.readData(BOOKINGS_FILE_PATH);
+        flightDbFromScheduleFile(flightsController);
+        flightsController.readData(FLIGHTS_FILE_PATH);
+        bookingsController.readData(BOOKINGS_FILE_PATH);
 
         boolean control = true;
 
@@ -79,7 +68,7 @@ class ConsoleApp implements FileUtil, DataUtil {
             switch (choice) {
                 case 1:
                     System.out.println("Displaying online table...");
-                    displayingOnlineTable(flightsDB);
+                    displayingOnlineTable(flightsController);
                     break;
                 case 2:
                     System.out.println("Displaying flight information...");
@@ -88,8 +77,8 @@ class ConsoleApp implements FileUtil, DataUtil {
                             "^[A-Za-z][A-Za-z][0-9]+",
                             "Flight number",
                             "PS0779");
-                    if (flightsDB.getAllFlights().stream().map(Flight::getFlightNumber).anyMatch(flightNumber::equalsIgnoreCase))
-                        flightsDB.getAllFlights()
+                    if (flightsController.getAllFlights().stream().map(Flight::getFlightNumber).anyMatch(flightNumber::equalsIgnoreCase))
+                        flightsController.getAllFlights()
                                 .stream().filter(item -> item.getFlightNumber()
                                 .equalsIgnoreCase(flightNumber))
                                 .forEach(ConsoleApp::displayingFlightInformation);
@@ -98,11 +87,11 @@ class ConsoleApp implements FileUtil, DataUtil {
                     break;
                 case 3:
                     System.out.println("Flight search and booking...");
-                    searchAndBooking(flightsDB, bookingsDB);
+                    searchAndBooking(flightsController, bookingsController);
                     break;
                 case 4:
                     System.out.println("Booking cancelling...");
-                    cancelBooking(bookingsDB);
+                    cancelBooking(bookingsController);
                     break;
                 case 5:
                     System.out.println("Searching flights...");
@@ -117,7 +106,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                             "^[A-Z][A-Za-z ]+",
                             "Surname",
                             "Sidorov");
-                    bookingsDB.getAllBookings().stream()
+                    bookingsController.getAllBookings().stream()
                             .filter(x ->
                                     bookingContainsPassengerWithName(x, name)
                                             && bookingContainsPassengerWithSurname(x, surname)
@@ -134,26 +123,26 @@ class ConsoleApp implements FileUtil, DataUtil {
                     break;
                 case 7:
                     System.out.println("Creating new list of flights from schedule...");
-                    flightDbFromScheduleFile(flightsDB);
+                    flightDbFromScheduleFile(flightsController);
                     break;
                 case 8:
                     control = false;
 
-                    customersDB.saveData(CUSTOMERS_FILE_PATH);
-                    flightsDB.saveData(FLIGHTS_FILE_PATH);
-                    bookingsDB.saveData(BOOKINGS_FILE_PATH);
+                    customersController.saveData(CUSTOMERS_FILE_PATH);
+                    flightsController.saveData(FLIGHTS_FILE_PATH);
+                    bookingsController.saveData(BOOKINGS_FILE_PATH);
                     break;
                 case 12:
                     System.out.println("Displaying entire list of flights...");
-                    flightsDB.displayAllFlights();
+                    flightsController.displayAllFlights();
                     break;
                 case 13:
                     System.out.println("Loading a list of flights from file...");
-                    flightsDB.readData(FLIGHTS_FILE_PATH);
+                    flightsController.readData(FLIGHTS_FILE_PATH);
                     break;
                 case 14:
                     System.out.println("Saving the list of flights to file...");
-                    flightsDB.saveData(FLIGHTS_FILE_PATH);
+                    flightsController.saveData(FLIGHTS_FILE_PATH);
                     break;
                 default:
                     System.out.println("Your choice is wrong. Please repeat your choice.");
@@ -476,7 +465,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                     loginName = scanner.nextLine();
                     System.out.print("Password: ");
                     password = scanner.nextLine();
-                    customerApp = customersDB.getCustomerByLogin(loginName, password);
+                    customerApp = customersController.getCustomerByLogin(loginName, password);
                     if (customerApp != null) {
                         System.out.printf("%s %s, Welcome to booking!!!\n", customerApp.getSurname(), customerApp.getName());
                         result = true;
@@ -486,7 +475,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                     return result;
                 case "REGISTER":
                     customerApp = (Customer) createPerson(PersonType.CUSTOMER);
-                    customersDB.saveCustomer(customerApp);
+                    customersController.saveCustomer(customerApp);
                     if (customerApp != null) {
                         System.out.printf("%s %s, Welcome to booking!!!\n", customerApp.getSurname(), customerApp.getName());
                         result = true;

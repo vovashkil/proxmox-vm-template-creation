@@ -1,6 +1,6 @@
 package com.project.booking.DAO;
 
-import com.project.booking.Flight.Flight;
+import com.project.booking.Booking.Flight;
 import org.junit.Assert;
 import org.junit.Test;
 

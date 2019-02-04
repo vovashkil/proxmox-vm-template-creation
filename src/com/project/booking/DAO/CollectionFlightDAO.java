@@ -1,7 +1,7 @@
 package com.project.booking.DAO;
 
 
-import com.project.booking.Flight.Flight;
+import com.project.booking.Booking.Flight;
 import com.project.booking.Logger.FlightLogger;
 
 import java.io.*;
