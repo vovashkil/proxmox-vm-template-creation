@@ -1,7 +1,8 @@
 package com.project.booking.Constants;
 
 public enum Sex {
-    MALE("Male", "MR"), FEMALE("Female", "MRS");
+    MALE("Male", "MR"),
+    FEMALE("Female", "MRS");
 
     private final String name;
     private final String prefix;
