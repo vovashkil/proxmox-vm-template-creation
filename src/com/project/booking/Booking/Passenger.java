@@ -34,11 +34,11 @@ public class Passenger extends Person implements Serializable {
     public String toString() {
         return "Passenger{" +
                 "pass_ID=" + pass_ID +
-                ", name='" + super.getName() + '\'' +
-                ", surname='" + super.getSurname() + '\'' +
+                ", name=\'" + super.getName() + "\'" +
+                ", surname=\'" + super.getSurname() + "\'" +
                 ", birthDate=" + dateLongToString(super.getBirthDate(), DataUtil.DATE_FORMAT) +
                 ", sex=" + super.getSex() +
-                ", passportNumber='" + passportNumber + '\'' +
+                ", passportNumber=\'" + passportNumber + "\'" +
                 "}";
     }
 }

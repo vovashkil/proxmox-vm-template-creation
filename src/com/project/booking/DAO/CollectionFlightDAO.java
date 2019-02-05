@@ -140,12 +140,12 @@ public class CollectionFlightDAO implements DAO<Flight> {
     }
 
     @Override
-    public void loadData(List<Flight> flightsList) {
+    public void loadData(List<Flight> flightsLoaded) {
         logger.info("Loading flights info db...");
 
-        if (flightsList != null)
+        if (flightsLoaded != null)
 
-            flightsList.forEach(this::save);
+            flightsLoaded.forEach(this::save);
     }
 
 }

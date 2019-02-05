@@ -40,17 +40,25 @@ public abstract class Person implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Person)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return getBirthDate() == person.getBirthDate() &&
-                getName().equals(person.getName()) &&
-                getSurname().equals(person.getSurname()) &&
-                getSex() == person.getSex();
+        return name.equals(person.getName()) &&
+                surname.equals(person.getSurname()) &&
+                birthDate.equals(person.getBirthDate()) &&
+                sex == person.getSex();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getSurname(), getBirthDate(), getSex());
+
+        int result = 11;
+        int coef = 31;
+        result = coef * result + name.hashCode();
+        result = coef * result + surname.hashCode();
+        result = coef * result + sex.hashCode();
+        result = coef * result + (int) (birthDate/60000);
+        return result;
+
     }
 
     @Override

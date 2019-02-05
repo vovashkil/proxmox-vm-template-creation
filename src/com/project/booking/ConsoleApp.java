@@ -43,7 +43,7 @@ class ConsoleApp implements FileUtil, DataUtil {
     }
 
     void startApp() {
-        flightDbFromScheduleFile(flightsController);
+
         flightsController.readData(FLIGHTS_FILE_PATH);
         bookingsController.readData(BOOKINGS_FILE_PATH);
 
@@ -157,7 +157,6 @@ class ConsoleApp implements FileUtil, DataUtil {
         System.out.println("6. Close session.");
         System.out.println("7. Resetting/Re-creating flights db from schedule file.");
         System.out.println("8. Exit.");
-        System.out.println("11. test. Generate flights db.");
         System.out.println("12. test. Display all flights.");
         System.out.println("13. test. Load flights from file.");
         System.out.println("14. test. Save flights to file.");
@@ -560,7 +559,7 @@ class ConsoleApp implements FileUtil, DataUtil {
         return result;
     }
 
-    private static void flightDbFromScheduleFile(FlightController flightsDB) {
+    private static void flightDbFromScheduleFile(FlightController flightsList) {
         System.out.println("Resetting/Generating new database of flights...");
 
         LocalTime currentTime = LocalTime.now(ZoneId.of(TIME_ZONE));
@@ -589,7 +588,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                         )
                 );
 
-                flightsDB.saveFlight(
+                flightsList.saveFlight(
                         new Flight(nextRecord[0],
                                 departureDateTimeLong,
                                 flightDurationTimeLong,
@@ -602,7 +601,7 @@ class ConsoleApp implements FileUtil, DataUtil {
             System.out.println(e.getStackTrace());
             System.out.println(e.getMessage());
         }
-        flightsDB.saveData(FLIGHTS_FILE_PATH);
+//        flightsDB.saveData(FLIGHTS_FILE_PATH);
     }
 
     private static boolean bookingContainsPassengerWithName(Booking booking, String name) {

@@ -79,6 +79,14 @@ public class Flight implements DataUtil, Serializable {
         return maxNumSeats;
     }
 
+    public List<Person> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(List<Person> passengers) {
+        this.passengers = passengers;
+    }
+
     public boolean addPassenger(Person passenger) {
 
         if (!passengers.contains(passenger) &&
@@ -128,7 +136,11 @@ public class Flight implements DataUtil, Serializable {
     @Override
     public int hashCode() {
 
-        return Objects.hash(flightNumber, departureDateTime);
+        int result = 11;
+        int coef = 31;
+
+        return coef * result + flightNumber.hashCode();
+
     }
 
     @Override
