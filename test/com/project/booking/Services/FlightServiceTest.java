@@ -1,5 +1,7 @@
-package com.project.booking.Flight;
+package com.project.booking.Services;
 
+import com.project.booking.Booking.Flight;
+import com.project.booking.Services.FlightService;
 import org.junit.Assert;
 import org.junit.Test;
 

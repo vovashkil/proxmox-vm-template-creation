@@ -1,4 +1,4 @@
-package com.project.booking.Persons;
+package com.project.booking.Booking;
 
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.Sex;
