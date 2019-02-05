@@ -1,8 +1,7 @@
 package com.project.booking.DAO;
 
+import com.project.booking.Booking.Customer;
 import com.project.booking.Constants.Sex;
-import com.project.booking.Logger.AppLogger;
-import com.project.booking.Persons.Customer;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;

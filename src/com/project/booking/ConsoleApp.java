@@ -1,18 +1,15 @@
 package com.project.booking;
 
 import com.opencsv.CSVReader;
-import com.project.booking.Booking.Booking;
-import com.project.booking.Booking.BookingController;
+import com.project.booking.Booking.*;
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
 import com.project.booking.Constants.PersonType;
 import com.project.booking.Constants.Sex;
-import com.project.booking.Persons.Customer;
-import com.project.booking.Persons.CustomerController;
-import com.project.booking.Flight.Flight;
-import com.project.booking.Flight.FlightController;
-import com.project.booking.Persons.Passenger;
-import com.project.booking.Persons.Person;
+import com.project.booking.Controllers.BookingController;
+import com.project.booking.Controllers.CustomerController;
+import com.project.booking.Controllers.FlightController;
+
 
 import java.io.IOException;
 import java.io.Reader;
@@ -21,8 +18,7 @@ import java.nio.file.Paths;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
