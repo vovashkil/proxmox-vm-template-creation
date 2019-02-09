@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class CollectionCustomerDAO implements CustomerDAO {
+public class CollectionCustomerDAO implements PersonDAO<Customer> {
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private List<Customer> customers;
@@ -23,13 +23,13 @@ public class CollectionCustomerDAO implements CustomerDAO {
     }
 
     @Override
-    public List<Customer> getAllCustomers() {
+    public List<Customer> getAll() {
         LOGGER.info("Get All Customers");
         return this.customers;
     }
 
     @Override
-    public void saveCustomer(Customer customer) {
+    public void save(Customer customer) {
         if (customer == null) {
             LOGGER.severe("Error Save Null Customer!");
             throw new NullPointerException("Customer is Null!");
@@ -45,7 +45,7 @@ public class CollectionCustomerDAO implements CustomerDAO {
     }
 
     @Override
-    public boolean deleteCustomer(int index) {
+    public boolean remove(int index) {
         if (this.customers == null || index < 0 || index >= this.customers.size()) {
             LOGGER.warning("Delete Customer with incorrect index: " + index);
             return false;
@@ -56,7 +56,7 @@ public class CollectionCustomerDAO implements CustomerDAO {
     }
 
     @Override
-    public boolean deleteCustomer(Customer customer) {
+    public boolean remove(Customer customer) {
         if (this.customers == null || customer == null || !this.customers.contains(customer)) {
             LOGGER.warning("Delete Customer which not exists in list: " + customer);
             return false;
@@ -104,11 +104,11 @@ public class CollectionCustomerDAO implements CustomerDAO {
     public void loadData(List<Customer> customers) {
         LOGGER.info("Loading flights info db...");
         if (customers != null)
-            customers.forEach(this::saveCustomer);
+            customers.forEach(this::save);
     }
 
     @Override
-    public Customer getCustomerByIndex(int index) {
+    public Customer getByIndex(int index) {
         LOGGER.info("Get Customer by Index: " + index);
         if (this.customers == null || index < 0 || index >= this.customers.size()) {
             LOGGER.info("Invalidate Customer index: " + index);

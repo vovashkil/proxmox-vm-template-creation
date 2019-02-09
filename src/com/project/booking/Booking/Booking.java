@@ -1,12 +1,12 @@
 package com.project.booking.Booking;
 
 import com.project.booking.Constants.DataUtil;
+import com.project.booking.Constants.Sex;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Booking implements DataUtil, Serializable {
 
@@ -109,6 +109,28 @@ public class Booking implements DataUtil, Serializable {
         return false;
     }
 
+    public Person createPerson(String name, String surname, long birthdate, Sex sex, String... args) {
+
+        Person result = null;
+
+        if (args.length == 1) {
+
+            result = new Passenger(name, surname, birthdate, sex, args[0]);
+            addPassenger(result);
+
+        }
+
+        if (args.length == 2) {
+
+            result = new Customer(name, surname, birthdate, sex, args[0], args[1]);
+            setCustomer((Customer) result);
+
+        }
+
+        return result;
+
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -139,5 +161,6 @@ public class Booking implements DataUtil, Serializable {
                 ",\n\t\t passengers=" + passengers +
                 '}';
     }
+
 }
 

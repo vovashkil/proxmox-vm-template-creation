@@ -1,9 +1,10 @@
 package com.project.booking.Controllers;
 
-import com.project.booking.Booking.Booking;
+import com.project.booking.Booking.*;
 import com.project.booking.Services.BookingService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BookingController {
 
@@ -60,4 +61,66 @@ public class BookingController {
         return bookingService.getBookingById(index);
 
     }
+
+    public Booking getBookingByBookingNumber(long bookingNumber) {
+
+        return bookingService.getAllBookings()
+                .stream()
+                .filter(booking -> booking.getBookingNumber() == bookingNumber)
+                .findAny().orElse(null);
+
+    }
+
+    public Booking createBooking(Flight flight, Customer customer, List<Person> passengers) {
+        Booking result = null;
+
+        if (flight != null && customer != null && passengers.size() > 0) {
+
+            result = new Booking(flight, customer, passengers);
+            passengers.forEach(flight::addPassenger);
+            saveBooking(result);
+        }
+
+        return result;
+    }
+
+    public void cancelBooking(long bookingNumber) {
+
+        Booking booking = getBookingByBookingNumber(bookingNumber);
+        if (booking != null) {
+
+            booking.getPassengers().forEach(booking.getFlight()::deletePassenger);
+            deleteBookingByObject(booking);
+
+        }
+
+    }
+
+    public List<Booking> getAllBookingsByNameAndSurname(String name, String surname) {
+
+        return
+                bookingService.getAllBookings().stream()
+                        .filter(x ->
+                                bookingContainsPassengerWithName(x, name)
+                                        && bookingContainsPassengerWithSurname(x, surname)
+                                        || x.getCustomer().getName().equalsIgnoreCase(name)
+                                        && x.getCustomer().getSurname().equalsIgnoreCase(surname))
+                        .collect(Collectors.toList());
+
+    }
+
+    private boolean bookingContainsPassengerWithName(Booking booking, String name) {
+        return
+                !booking.getPassengers().stream()
+                        .filter(x -> x.getName().equalsIgnoreCase(name))
+                        .collect(Collectors.toList()).isEmpty();
+    }
+
+    private boolean bookingContainsPassengerWithSurname(Booking booking, String surname) {
+        return
+                !booking.getPassengers().stream()
+                        .filter(x -> x.getSurname().equalsIgnoreCase(surname))
+                        .collect(Collectors.toList()).isEmpty();
+    }
+
 }

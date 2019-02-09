@@ -1,35 +1,35 @@
 package com.project.booking.Services;
 
-import com.project.booking.DAO.CollectionCustomerDAO;
-import com.project.booking.DAO.CustomerDAO;
 import com.project.booking.Booking.Customer;
+import com.project.booking.DAO.CollectionCustomerDAO;
+import com.project.booking.DAO.PersonDAO;
 
 import java.util.List;
 
 public class CustomerService {
 
-    private CustomerDAO customerDao = new CollectionCustomerDAO();
+    private PersonDAO<Customer> customerDao = new CollectionCustomerDAO();
 
-    public CustomerDAO getCustomerDAO() {
+    public PersonDAO getCustomerDAO() {
         return customerDao;
     }
 
     public List<Customer> getAllCustomers() {
-        return customerDao.getAllCustomers();
+        return customerDao.getAll();
     }
 
     public void displayAllCustomers() {
-        customerDao.getAllCustomers()
+        customerDao.getAll()
                 .forEach(System.out::println);
     }
 
     public void saveCustomer(Customer customer) {
         if (customer.getLoginName() != "" && customer.getPassword() != "") {
-            if (customerDao.getAllCustomers()
+            if (customerDao.getAll()
                     .stream()
                     .filter(e -> (e.getLoginName() == customer.getLoginName()))
                     .count() == 0) {
-                customerDao.saveCustomer(customer);
+                customerDao.save(customer);
             } else {
                 new IllegalArgumentException();
             }
@@ -45,24 +45,24 @@ public class CustomerService {
     }
 
     public void deleteCusomerByIndex(int index) {
-        customerDao.deleteCustomer(index);
+        customerDao.remove(index);
     }
 
     public int count() {
-        return customerDao.getAllCustomers()
+        return customerDao.getAll()
                 .size();
     }
 
     public Customer getCustomerById(int index) {
-        if (index >= 0 && index < customerDao.getAllCustomers().size()) {
-            return customerDao.getAllCustomers().get(index);
+        if (index >= 0 && index < customerDao.getAll().size()) {
+            return customerDao.getAll().get(index);
         } else {
             return null;
         }
     }
 
     public Customer getCustomerByLogin(String loginName, String password) {
-        return customerDao.getAllCustomers()
+        return customerDao.getAll()
                 .stream()
                 .filter(customer -> (customer.getLoginName().equalsIgnoreCase(loginName) && customer.getPassword().equals(password)))
                 .findAny().orElse(null);

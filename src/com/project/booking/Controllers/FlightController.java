@@ -1,11 +1,20 @@
 package com.project.booking.Controllers;
 
 import com.project.booking.Booking.Flight;
+import com.project.booking.Constants.DataUtil;
+import com.project.booking.Methods;
 import com.project.booking.Services.FlightService;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class FlightController {
+import static com.project.booking.Constants.ComUtil.dateLongToString;
+import static com.project.booking.Constants.ComUtil.parseDate;
+import static com.project.booking.Constants.ComUtil.timeOfDayLongToString;
+
+public class FlightController implements DataUtil {
 
     private FlightService flightService = new FlightService();
 
@@ -58,6 +67,63 @@ public class FlightController {
     public Flight getFlightById(int index) {
 
         return flightService.getFlightById(index);
+
+    }
+
+    public void printAllSortedCurrent24Hours(String format) {
+
+        flightService.getAllFlights()
+                .stream()
+                .sorted(Comparator.comparingLong(Flight::getDepartureDateTime))
+                .forEach(flight -> printFlight(flight, format)
+                );
+
+    }
+
+    public void printFlight(Flight flight, String format) {
+
+        System.out.printf(format,
+                flight.getFlightNumber(),
+                dateLongToString(flight.getDepartureDateTime(), DATE_FORMAT),
+                dateLongToString(flight.getDepartureDateTime(), TIME_FORMAT),
+                flight.getDestination(),
+                timeOfDayLongToString(flight.getEstFlightDuration())
+        );
+
+    }
+
+    public Flight getByFlightNumber(String flightNumber) {
+
+        return flightService.getAllFlights()
+                .stream()
+                .filter(item -> item.getFlightNumber()
+                        .equalsIgnoreCase(flightNumber)).findFirst().orElse(null);
+
+    }
+
+    public int getMaxSeatNumber() {
+
+        return
+                flightService.getAllFlights()
+                        .stream()
+                        .mapToInt(Flight::getMaxNumSeats)
+                        .max().orElse(-1);
+
+    }
+
+    public List<Flight> getFlightsMatchedCriteria(String destination, String date, int passengersNumber) {
+
+        return
+                flightService.getAllFlights()
+                        .stream()
+                        .filter(
+                                item -> item.getDestination().equalsIgnoreCase(destination) &&
+                                        item.getDepartureDateTime() > parseDate(date) &&
+                                        ((item.getMaxNumSeats() - item.getPassengersOnBoard()) >= passengersNumber)
+                        )
+                        .sorted(Comparator.comparingLong(Flight::getDepartureDateTime))
+                        .collect(Collectors.toList());
+
 
     }
 
