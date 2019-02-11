@@ -1,6 +1,7 @@
 package com.project.booking.Booking;
 
 import com.project.booking.Constants.DataUtil;
+import com.project.booking.Constants.RoleType;
 import com.project.booking.Constants.Sex;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ public class Customer extends Person implements DataUtil, Serializable {
     private String loginName;
     private String password;
     private boolean isVIP = false;
+    private RoleType role = RoleType.GUEST;
 
     private static int count = 0;
 
@@ -39,16 +41,26 @@ public class Customer extends Person implements DataUtil, Serializable {
         isVIP = VIP;
     }
 
+    public RoleType getRole() {
+        return role;
+    }
+
+    public void setRole(RoleType role) {
+        this.role = role;
+    }
+
     public Customer(String name, String surname, long birthDate, Sex sex, String loginName, String password) {
         super(name, surname, birthDate, sex);
         this.loginName = loginName;
         this.password = password;
+        this.role = RoleType.USER;
     }
 
     @Override
     public String toString() {
         return "Customer{" +
-                "loginName='" + loginName + '\'' +
+                "role=" + getRole() + '\'' +
+                ", loginName='" + loginName + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + super.getName() + '\'' +
                 ", surname='" + super.getSurname() + '\'' +

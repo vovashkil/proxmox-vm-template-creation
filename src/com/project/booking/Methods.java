@@ -246,7 +246,6 @@ public class Methods implements DataUtil, FileUtil {
     }
 
     void method80_saveData() {
-
         flightsController.saveData(FLIGHTS_FILE_PATH);
         bookingsController.saveData(BOOKINGS_FILE_PATH);
 

@@ -1,45 +1,101 @@
 package com.project.booking;
 
 import com.project.booking.Booking.*;
+import com.project.booking.Console.Auth;
+import com.project.booking.Console.Command;
+import com.project.booking.Console.Commands;
 import com.project.booking.Constants.DataUtil;
 import com.project.booking.Constants.FileUtil;
 import com.project.booking.Constants.PersonType;
 import com.project.booking.Constants.Sex;
-import com.project.booking.Controllers.BookingController;
-import com.project.booking.Controllers.CustomerController;
-import com.project.booking.Controllers.FlightController;
+import com.project.booking.Controllers.Storage;
+import com.project.booking.Logger.AppLogger;
 
 import java.util.*;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static com.project.booking.Constants.ComUtil.*;
 
 class ConsoleApp implements FileUtil, DataUtil {
-    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    Auth a = new Auth();
 
-    private final CustomerController customersController;
-    private final FlightController flightsController;
-    private final BookingController bookingsController;
-
+    private final Storage storage = new Storage();
+    //private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static Customer customerApp;
+    List<Command> commands = Commands.all(AppLogger.logger, storage, a);
+
 
     public ConsoleApp() {
-        this.customersController = new CustomerController();
-        this.flightsController = new FlightController();
-        this.bookingsController = new BookingController();
+        storage.getCustomers().readData(CUSTOMERS_FILE_PATH);
+    }
 
-        customersController.readData(CUSTOMERS_FILE_PATH);
+    private void printMainMenu2() {
+        Optional<Command> cmd;
+        AtomicInteger index = new AtomicInteger();
+        commands
+                .stream()
+                .filter(command -> command.isAllowToUnAuth())
+                .forEach(command -> {
+                    System.out.printf("%d. %s (%s)| ", index.addAndGet(1), command.description(), command.text());
+                });
+        System.out.println();
+
+//        System.out.println("1. Online table.");
+//        System.out.println("2. Flight information.");
+//        System.out.println("3. Flights search and booking.");
+//        System.out.println("4. Booking cancelling.");
+//        System.out.println("5. My flights.");
+//        System.out.println("6. Close session.");
+//        System.out.println("7. Resetting/Re-creating flights db from schedule file.");
+//        System.out.println("8. Exit.");
+//        System.out.println("12. test. Display all flights.");
+//        System.out.println("13. test. Load flights from file.");
+//        System.out.println("14. test. Save flights to file.");
+
+    }
+
+    void startApp2() {
+
+        System.out.println("Hello Guest!\nPlease select follow command:");
+
+
+        Scanner in = new Scanner(System.in);
+        Optional<Command> cmd;
+        Boolean isExit = false;
+        do {
+            printMainMenu2();
+            System.out.printf("Please enter your choice [%d-%d]: ", 1, commands.stream().filter(command -> command.isAllowToUnAuth()).count());
+
+            String line = in.nextLine().trim();
+            cmd = commands
+                    .stream()
+                    //.filter(command -> command.isAllowToUnAuth())
+                    .filter(command -> command.text().equalsIgnoreCase(line))
+                    .findFirst();
+            //cmd.ifPresent(Command::doCommand);
+            cmd.ifPresentOrElse(Command::doCommand, () -> System.out.println("No such command in offer list!"));
+            cmd.ifPresentOrElse(command -> System.out.println("> " + command.text()), () -> System.out.println("> " + line));
+            try {
+                isExit = cmd.get().isExit();
+            } catch (Exception e) {
+                e.getMessage();
+            }
+            // System.out.println("> " + cmd.get().text());
+            // } while (!cmd.get().isExit());
+        } while (!isExit);
+        System.out.println("Bye.");
     }
 
     void startApp() {
 
-        Methods m = new Methods(flightsController, bookingsController);
+        Methods m = new Methods(storage.getFlights(), storage.getBookings());
 
-        flightsController.readData(FLIGHTS_FILE_PATH);
-        bookingsController.readData(BOOKINGS_FILE_PATH);
+        storage.getFlights().readData(FLIGHTS_FILE_PATH);
+        storage.getBookings().readData(BOOKINGS_FILE_PATH);
 
         boolean control = true;
 
@@ -173,20 +229,20 @@ class ConsoleApp implements FileUtil, DataUtil {
                     break;
                 case 8:
                     control = false;
-                    customersController.saveData(CUSTOMERS_FILE_PATH);
+                    storage.getCustomers().saveData(CUSTOMERS_FILE_PATH);
                     m.method80_saveData();
                     break;
                 case 12:
                     System.out.println("Displaying entire list of flights...");
-                    flightsController.displayAllFlights();
+                    storage.getFlights().displayAllFlights();
                     break;
                 case 13:
                     System.out.println("Loading a list of flights from file...");
-                    flightsController.readData(FLIGHTS_FILE_PATH);
+                    storage.getFlights().readData(FLIGHTS_FILE_PATH);
                     break;
                 case 14:
                     System.out.println("Saving the list of flights to file...");
-                    flightsController.saveData(FLIGHTS_FILE_PATH);
+                    storage.getFlights().saveData(FLIGHTS_FILE_PATH);
                     break;
                 default:
                     System.out.println("Your choice is wrong. Please repeat your choice.");
@@ -248,8 +304,8 @@ class ConsoleApp implements FileUtil, DataUtil {
     }
 
     boolean loginCustomer() {
-        LOGGER.setLevel(Level.INFO);
-        LOGGER.info("Try login for booking ticket");
+        AppLogger.logger.setLevel(Level.INFO);
+        AppLogger.logger.info("Try login for booking ticket");
 
         boolean result = false;
         customerApp = null;
@@ -268,7 +324,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                     loginName = scanner.nextLine();
                     System.out.print("Password: ");
                     password = scanner.nextLine();
-                    customerApp = customersController.getCustomerByLogin(loginName, password);
+                    customerApp = storage.getCustomers().getCustomerByLogin(loginName, password);
                     if (customerApp != null) {
                         System.out.printf("%s %s, Welcome to booking!!!\n", customerApp.getSurname(), customerApp.getName());
                         result = true;
@@ -278,7 +334,7 @@ class ConsoleApp implements FileUtil, DataUtil {
                     return result;
                 case "REGISTER":
                     customerApp = (Customer) createPerson(PersonType.CUSTOMER);
-                    customersController.saveCustomer(customerApp);
+                    storage.getCustomers().saveCustomer(customerApp);
                     if (customerApp != null) {
                         System.out.printf("%s %s, Welcome to booking!!!\n", customerApp.getSurname(), customerApp.getName());
                         result = true;

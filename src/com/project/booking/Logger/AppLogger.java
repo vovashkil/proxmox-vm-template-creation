@@ -14,9 +14,10 @@ import static com.project.booking.Constants.FileUtil.LOG_FILEPATH_APP;
 public class AppLogger {
     static private FileHandler fileTxt;
     static private SimpleFormatter formatterTxt;
+    static public Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     static public void setup() throws IOException {
-        Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+//        Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
         logger.setLevel(Level.ALL);
         fileTxt = new FileHandler(LOG_FILEPATH_APP);
