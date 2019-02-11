@@ -31,6 +31,8 @@ class ConsoleApp implements FileUtil, DataUtil {
 
     public ConsoleApp() {
         storage.getCustomers().readData(CUSTOMERS_FILE_PATH);
+        storage.getFlights().readData(FLIGHTS_FILE_PATH);
+        storage.getBookings().readData(BOOKINGS_FILE_PATH);
     }
 
     private void printMainMenu2() {
