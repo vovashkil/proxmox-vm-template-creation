@@ -12,14 +12,7 @@ public class Main {
             e.printStackTrace();
             throw new RuntimeException("Problems with creating the log files");
         }
-
-//        for (; ; ) {
-//            if (app.loginCustomer()) {
-//                break;
-//            }
-//        }
-        app.startApp2();
-        //app.startApp();
+        app.startApp();
     }
 }
 

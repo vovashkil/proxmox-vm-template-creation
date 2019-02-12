@@ -27,7 +27,7 @@ public class CmdShow extends CommandBase implements Command {
 
     @Override
     public void doCommand() {
-        //     m.method10_displayingOnlineTable();
+        log.info(String.format("%s executing", this.text()));
 
         final String PRINT_FORMAT = "| %-7s | %-10s | %-5s | %-30s | %8s |\n";
         final String DASHES = new String(new char[76]).replace("\0", "-");

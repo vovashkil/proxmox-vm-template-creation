@@ -10,15 +10,19 @@ public class Commands {
     public static List<Command> all(Logger log, Storage storage, Auth a) {
         return new ArrayList<Command>() {{
             add(new CmdShow(log, storage));
+            add(new CmdFlightInfo(log, storage));
+            add(new CmdBookAdd(log, storage, a));
+            add(new CmdBookCancel(log, storage, a));
+            add(new CmdFlightsMy(log, storage, a));
             add(new CmdLogin(log, storage, a));
             add(new CmdRegister(log, storage, a));
             add(new CmdCloseSession(log, storage, a));
+            add(new CmdFlightsCreate(log, storage));
             add(new CmdExit(log, storage));
-            add(new CmdCreateFlights(log, storage));
-//            add(new CmdBook(log, storage));
-//            add(new CmdHelp(log, storage, a));
-//            add(new CmdExit(log, storage));
-//            add(new CmdAutorize(log, storage, a));
+            //test command
+//            add(new CmdFlightsAll(log, storage));
+//            add(new CmdFlightsLoad(log, storage));
+//            add(new CmdFlightsSave(log, storage));
         }};
     }
 }

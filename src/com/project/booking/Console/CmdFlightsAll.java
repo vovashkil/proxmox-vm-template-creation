@@ -4,33 +4,30 @@ import com.project.booking.Controllers.Storage;
 
 import java.util.logging.Logger;
 
-public class CmdCloseSession extends CommandBase implements Command {
-    private Auth a;
-
-    public CmdCloseSession(Logger log, Storage storage, Auth a) {
+public class CmdFlightsAll extends CommandBase implements Command{
+    public CmdFlightsAll(Logger log, Storage storage) {
         super(log, storage);
-        this.a = a;
     }
 
     @Override
     public String text() {
-        return "CLOSE";
+        return "ALLFLIGHTS";
     }
 
     @Override
     public String description() {
-        return "Close session";
+        return "test. Display all flights";
     }
 
     @Override
     public void doCommand() {
         log.info(String.format("%s executing", this.text()));
-        storage.setUser(storage.getCustomers().getCustomerGuest());
-        a.setAuth(false);
+        System.out.println("Displaying entire list of flights...");
+        storage.getFlights().displayAllFlights();
     }
 
     @Override
     public boolean isAllowToUnAuth() {
-        return (a.isAuth());
+        return true;
     }
 }

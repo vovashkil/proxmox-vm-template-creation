@@ -4,33 +4,32 @@ import com.project.booking.Controllers.Storage;
 
 import java.util.logging.Logger;
 
-public class CmdCloseSession extends CommandBase implements Command {
-    private Auth a;
+import static com.project.booking.Constants.FileUtil.FLIGHTS_FILE_PATH;
 
-    public CmdCloseSession(Logger log, Storage storage, Auth a) {
+public class CmdFlightsLoad extends CommandBase implements Command {
+    public CmdFlightsLoad(Logger log, Storage storage) {
         super(log, storage);
-        this.a = a;
     }
 
     @Override
     public String text() {
-        return "CLOSE";
+        return "LOADFLIGHTS";
     }
 
     @Override
     public String description() {
-        return "Close session";
+        return "test. Load flights from file";
     }
 
     @Override
     public void doCommand() {
         log.info(String.format("%s executing", this.text()));
-        storage.setUser(storage.getCustomers().getCustomerGuest());
-        a.setAuth(false);
+        System.out.println("Loading a list of flights from file...");
+        storage.getFlights().readData(FLIGHTS_FILE_PATH);
     }
 
     @Override
     public boolean isAllowToUnAuth() {
-        return (a.isAuth());
+        return true;
     }
 }

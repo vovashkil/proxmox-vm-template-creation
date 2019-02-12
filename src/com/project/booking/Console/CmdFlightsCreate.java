@@ -19,8 +19,8 @@ import static com.project.booking.Constants.ComUtil.parseTime;
 import static com.project.booking.Constants.DataUtil.TIME_ZONE;
 import static com.project.booking.Constants.FileUtil.KBP_SCHEDULE_FILE_PATH;
 
-public class CmdCreateFlights extends CommandBase implements Command {
-    public CmdCreateFlights(Logger log, Storage storage) {
+public class CmdFlightsCreate extends CommandBase implements Command {
+    public CmdFlightsCreate(Logger log, Storage storage) {
         super(log, storage);
     }
 
@@ -31,11 +31,12 @@ public class CmdCreateFlights extends CommandBase implements Command {
 
     @Override
     public String description() {
-        return "Create new flights from schedule";
+        return "Create new flights";
     }
 
     @Override
     public void doCommand() {
+        log.info(String.format("%s executing", this.text()));
         //     m.method70_flightDbFromScheduleFile();
         System.out.println("Resetting/Generating new database of flights...");
 
