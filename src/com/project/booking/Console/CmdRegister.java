@@ -5,8 +5,11 @@ import com.project.booking.Controllers.Storage;
 import java.util.logging.Logger;
 
 public class CmdRegister extends CommandBase implements Command {
-    public CmdRegister(Logger log, Storage storage) {
+    private Auth a;
+
+    public CmdRegister(Logger log, Storage storage, Auth a) {
         super(log, storage);
+        this.a = a;
     }
 
     @Override
@@ -26,6 +29,7 @@ public class CmdRegister extends CommandBase implements Command {
 
     @Override
     public boolean isAllowToUnAuth() {
-        return true;
+        return (!a.isAuth());
     }
+
 }

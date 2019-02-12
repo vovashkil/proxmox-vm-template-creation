@@ -1,6 +1,8 @@
 package com.project.booking.Services;
 
 import com.project.booking.Booking.Customer;
+import com.project.booking.Constants.RoleType;
+import com.project.booking.Constants.Sex;
 import com.project.booking.DAO.CollectionCustomerDAO;
 import com.project.booking.DAO.PersonDAO;
 
@@ -66,5 +68,19 @@ public class CustomerService {
                 .stream()
                 .filter(customer -> (customer.getLoginName().equalsIgnoreCase(loginName) && customer.getPassword().equals(password)))
                 .findAny().orElse(null);
+    }
+
+    public Customer getCustomerGuest() {
+        Customer guest = customerDao.getAll()
+                .stream()
+                .filter(customer -> (customer.getRole().equals(RoleType.GUEST)))
+                .findAny().orElse(null);
+        if (guest == null) {
+            guest = new Customer("GUEST", "GUEST", 0, Sex.UNKNOWN, "GUEST", "GUEST");
+            guest.setRole(RoleType.GUEST);
+            customerDao.save(guest);
+        }
+
+        return guest;
     }
 }

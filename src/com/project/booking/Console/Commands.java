@@ -10,8 +10,8 @@ public class Commands {
     public static List<Command> all(Logger log, Storage storage, Auth a) {
         return new ArrayList<Command>() {{
             add(new CmdShow(log, storage));
-            add(new CmdLogin(log, storage));
-            add(new CmdRegister(log, storage));
+            add(new CmdLogin(log, storage, a));
+            add(new CmdRegister(log, storage, a));
             add(new CmdCloseSession(log, storage, a));
             add(new CmdExit(log, storage));
             add(new CmdCreateFlights(log, storage));

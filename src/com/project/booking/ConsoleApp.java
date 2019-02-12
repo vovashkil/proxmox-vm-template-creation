@@ -41,9 +41,7 @@ class ConsoleApp implements FileUtil, DataUtil {
         commands
                 .stream()
                 .filter(command -> command.isAllowToUnAuth())
-                .forEach(command -> {
-                    System.out.printf("%d. %s (%s)| ", index.addAndGet(1), command.description(), command.text());
-                });
+                .forEach(command -> System.out.printf("%d. %s (%s) | ", index.addAndGet(1), command.description(), command.text()));
         System.out.println();
 
 //        System.out.println("1. Online table.");
@@ -61,26 +59,36 @@ class ConsoleApp implements FileUtil, DataUtil {
     }
 
     void startApp2() {
+        AppLogger.logger.info("Start Console Application...");
 
+        storage.getCustomers().getCustomerGuest();
         System.out.println("Hello Guest!\nPlease select follow command:");
-
 
         Scanner in = new Scanner(System.in);
         Optional<Command> cmd;
         Boolean isExit = false;
         do {
             printMainMenu2();
-            System.out.printf("Please enter your choice [%d-%d]: ", 1, commands.stream().filter(command -> command.isAllowToUnAuth()).count());
+            System.out.printf("Please enter your choice [%d-%d]: ", 1, commands
+                    .stream()
+                    .filter(Command::isAllowToUnAuth)
+                    .count());
 
             String line = in.nextLine().trim();
             cmd = commands
                     .stream()
-                    //.filter(command -> command.isAllowToUnAuth())
+                    .filter(Command::isAllowToUnAuth)
                     .filter(command -> command.text().equalsIgnoreCase(line))
                     .findFirst();
-            //cmd.ifPresent(Command::doCommand);
-            cmd.ifPresentOrElse(Command::doCommand, () -> System.out.println("No such command in offer list!"));
-            cmd.ifPresentOrElse(command -> System.out.println("> " + command.text()), () -> System.out.println("> " + line));
+
+            cmd.ifPresent(Command::doCommand);
+
+            if (cmd.isPresent()) {
+                System.out.println("> " + cmd.get().text());
+            } else {
+                System.out.println("No such command in offer list!");
+                System.out.println("> " + line.toUpperCase());
+            }
             try {
                 isExit = cmd.get().isExit();
             } catch (Exception e) {

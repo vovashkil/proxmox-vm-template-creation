@@ -68,7 +68,7 @@ public class CollectionCustomerDAO implements PersonDAO<Customer> {
 
     @Override
     public void saveData(String filePath) {
-        LOGGER.info("Saving customers db to file...");
+        LOGGER.info("Saving customers data to file...");
         try
                 (
                         FileOutputStream fileOutput = new FileOutputStream(filePath);
@@ -85,7 +85,7 @@ public class CollectionCustomerDAO implements PersonDAO<Customer> {
 
     @Override
     public void readData(String filePath) {
-        LOGGER.info("Reading customers db from file: " + filePath + "...");
+        LOGGER.info("Reading customers data from file: " + filePath + "...");
         List<Customer> listLoaded = null;
         try
                 (
@@ -102,7 +102,7 @@ public class CollectionCustomerDAO implements PersonDAO<Customer> {
 
     @Override
     public void loadData(List<Customer> customers) {
-        LOGGER.info("Loading flights info db...");
+        LOGGER.info("Loading customers info data...");
         if (customers != null)
             customers.forEach(this::save);
     }
