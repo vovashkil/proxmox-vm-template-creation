@@ -1,3 +1,4 @@
+# Grab and import a VM template image into a Proxmox cluster
 ## Download debian cloud image
 ```
 wget https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
